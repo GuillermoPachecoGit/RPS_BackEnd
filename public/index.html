@@ -1,0 +1,18 @@
+<html>
+   <head>
+      <title>File Uploading Form</title>
+   </head>
+
+   <body>
+      <h3>File Upload:</h3>
+      Select a file to upload: <br />
+      
+      <form action = "http://localhost:3000/uploadFile" method = "POST" 
+         enctype = "multipart/form-data">
+         <input type="file" name="uploads[]" size="50" />
+         <br />
+         <button type = "submit" value = "Upload File" />
+      </form>
+      
+   </body>
+</html>
