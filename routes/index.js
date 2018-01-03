@@ -11,7 +11,7 @@ var upload = multer({dest: './temp/'
 var path = require('path');
 
 /**********************R-Script**********************/
-var R = require('r-script')
+//var R = require("r-script")
 
 router.get('/', function (req, res) {
     res.send('Welcome to RPS API');
@@ -30,11 +30,15 @@ router.get('/', function (req, res) {
                   fs.unlink('./temp/'+req.files[0].filename, function(e) {
                       console.log("success upload");
                       //eventEmitter.emit('readFileR',req.files[0].originalname,res);
-                      var out = R("test.R").data("hello world", 20).callSync();
-                      console.log(out);
+                      //Test R
+                      /*var out = R("ex-sync.R")
+                        .data("hello world", 20)
+                        .callSync();
+                        
+                        console.log(out);*/
                   }); 
               });  
       }
 });
 
- module.exports = router;
+module.exports = router;
