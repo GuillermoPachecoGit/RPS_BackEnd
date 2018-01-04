@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var bd=require('./db_connect/bd');
+var bd=require('../db_connect/db');
 
 
 
@@ -34,5 +34,5 @@ router.post('/validate_user', function(req,res,next){
   });
   
 });
-S
+
 module.exports = router;

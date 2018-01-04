@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var bd=require('./db_connect/bd');
+var bd=require('../db_connect/db');
 
 router.get('/get_projects', function(req,res,next){
     var id_user = req.query.id_user;

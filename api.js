@@ -1,6 +1,8 @@
 var express = require('express');
 var app = express();
+var cors = require('cors')
 
+app.use(cors())
 // ROUTES FOR OUR API
 // =============================================================================
 var router = express.Router();              // get an instance of the express Router
@@ -48,6 +50,7 @@ app.use('/db_request_project_w', storeProject);
 
 //Test upload file static
 app.use(express.static('public'));
+
 app.get('/index.html', function (req, res) {
    res.sendFile( __dirname + "/" + "index.html" );
 })
