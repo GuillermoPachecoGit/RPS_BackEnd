@@ -8,3 +8,4 @@
 -npm install seneca-r-script  --save --> dependencia de r-script
 -npm install ngs-dashboard  --save --> dependencia de r-script ERROR
 -npm install cors --save
+-npm install body-parser --save

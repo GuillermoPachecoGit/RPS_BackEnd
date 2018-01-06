@@ -1,6 +1,14 @@
 var express = require('express');
 var app = express();
+//dominios cruzados, web client y servicio en distinto server
 var cors = require('cors')
+//parsear POST
+var bodyParser = require('body-parser');
+
+// configure app to use bodyParser()
+// this will let us get the data from a POST
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.use(cors())
 // ROUTES FOR OUR API

@@ -4,13 +4,14 @@ var bd=require('../db_connect/db');
 
 //register one user into database
 router.post('/register_user', function(req,res,next){
-    var username = req.body.name_user;
+    console.log(req.body);
+    var username = req.body.name;
     var email = req.body.email;
     var pass = req.body.pass;
     var country = req.body.country;
     var area = req.body.area;
     var institution = req.body.institution; 
-    bd.query('INSERT INTO app_user values(DEFAULT,$1, $2, $3, $4, $5, $6)',[pass, username, email,institution,country,area], function(err, result){
+    bd.query('INSERT INTO app_user values(DEFAULT,$1, $2, $3, $4, $5, $6)',[pass,area, username, email,institution,country], function(err, result){
        if(err){
          console.log(err);
          console.log(err["code"]);
@@ -27,7 +28,7 @@ router.post('/register_user', function(req,res,next){
          }
        }
        else{
-         res.status(200).json( { "result": "success"});;
+         res.status(200).json( { "result": "ok"});;
        }
      });
    });
