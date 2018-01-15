@@ -1,6 +1,8 @@
 var express = require('express');
 var app = express();
 var router = express.Router();
+var events = require('events');
+var eventEmitter = new events.EventEmitter();
 /********************Uploads Datasets********************/
 var fs = require("fs");
 var bodyParser = require('body-parser');
@@ -11,7 +13,9 @@ var upload = multer({dest: './temp/'
 var path = require('path');
 
 /**********************R-Script**********************/
-//var R = require("r-script")
+var R = require("r-script")
+var parseJSON = require('../private_modules/parseR/parseJSON');
+var parser = new parseJSON();
 
 router.get('/', function (req, res) {
     res.send('Welcome to RPS API');
@@ -29,16 +33,44 @@ router.get('/', function (req, res) {
                   //borramos el archivo temporal creado
                   fs.unlink('./temp/'+req.files[0].filename, function(e) {
                       console.log("success upload");
-                      //eventEmitter.emit('readFileR',req.files[0].originalname,res);
+                      eventEmitter.emit('readFileR',req.files[0].originalname,res);
                       //Test R
-                      /*var out = R("ex-sync.R")
+                      /*var out = R('r_scripts/test.R')
                         .data("hello world", 20)
                         .callSync();
-                        
                         console.log(out);*/
                   }); 
               });  
       }
 });
+
+
+//Aca leo el archivo en R
+var myEventHandler = function (nameFile,res) {
+    console.log(nameFile);
+    var path = "./public/datasets/".concat(nameFile);
+    var out = R("r_scripts/test.R")
+    .data({file : path})
+    .callSync();
+    
+   //console.log(out); 
+   console.log(parser.parseDataR(out));
+
+   /* bd.query('INSERT INTO dataset_json values(DEFAULT,$1,current_timestamp,$2, $3)',[description,name_project,id_user], function(err, result){
+        console.log(result);
+         if(err){
+           console.log(err);
+           res.status(200).json( { "error": "Error in the connection with database." });
+         }
+         else{
+           res.status(200).json( { "error": "success" });;
+         }
+       });*/
+
+    res.status(200).json(parser.parseDataR(out));
+}
+
+//Assign the event handler to an event:
+eventEmitter.on('readFileR', myEventHandler);
 
 module.exports = router;
