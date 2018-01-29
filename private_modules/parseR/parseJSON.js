@@ -32,9 +32,22 @@ class ParseJSON {
         }
 
         delete data_R.data;
-        return JSON.stringify(data_R);
+        data_R.colors = this.generateArrayColors(n_specimen);
+        return data_R;
     }
 
+
+    generateArrayColors(length) {
+        var colors = [];
+        while (colors.length < length) {
+            do {
+                var color = Math.floor((Math.random()*1000000)+1);
+            } while (colors.indexOf(color) >= 0);
+            colors.push("#" + ("000000" + color.toString(16)).slice(-6));
+        }
+        console.log(colors);
+        return colors;
+    }
 }
 
 module.exports = ParseJSON;

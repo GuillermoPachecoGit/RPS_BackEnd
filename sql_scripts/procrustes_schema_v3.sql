@@ -87,7 +87,7 @@ CREATE  TABLE dataset_json (
  colors json NOT NULL, --para editar colores
  specimen_name json NOT NULL,
  dataset_id_ref int8 NULL,
- project_id_ref  int8  NOT NULL,
+ project_id_ref  int8  NULL,
  CONSTRAINT pk_dataset_json PRIMARY KEY (dataset_id,project_id)
 );
 

@@ -3,12 +3,8 @@ var router = express.Router();
 var bd=require('../db_connect/db');
 
 
-
-module.exports = router;
-
 router.post('/validate_user', function(req,res,next){
 
-  console.log(req.body);
   var email = req.body.email;
   var pass = req.body.pass;
 

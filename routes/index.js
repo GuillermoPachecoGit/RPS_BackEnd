@@ -3,6 +3,10 @@ var app = express();
 var router = express.Router();
 var events = require('events');
 var eventEmitter = new events.EventEmitter();
+
+var bd=require('./db_connect/db');
+
+
 /********************Uploads Datasets********************/
 var fs = require("fs");
 var bodyParser = require('body-parser');
@@ -22,6 +26,9 @@ router.get('/', function (req, res) {
  })
 
  router.post("/uploadFile", upload.array("uploads[]", 12), function(req, res) {
+    console.log(req.body.project_id);
+    console.log(req.body.name_dataset);
+
     var ext = path.extname(req.files[0].originalname);
        if(ext !== '.tps' && ext !== '.nts' && ext !== '.txt') {
         console.log("archivo invalido");
@@ -33,12 +40,7 @@ router.get('/', function (req, res) {
                   //borramos el archivo temporal creado
                   fs.unlink('./temp/'+req.files[0].filename, function(e) {
                       console.log("success upload");
-                      eventEmitter.emit('readFileR',req.files[0].originalname,res);
-                      //Test R
-                      /*var out = R('r_scripts/test.R')
-                        .data("hello world", 20)
-                        .callSync();
-                        console.log(out);*/
+                      eventEmitter.emit('readFileR',req.files[0].originalname,req.body,res);
                   }); 
               });  
       }
@@ -46,28 +48,33 @@ router.get('/', function (req, res) {
 
 
 //Aca leo el archivo en R
-var myEventHandler = function (nameFile,res) {
+var myEventHandler = function (nameFile,params,res) {
     console.log(nameFile);
     var path = "./public/datasets/".concat(nameFile);
     var out = R("r_scripts/test.R")
     .data({file : path})
     .callSync();
     
-   //console.log(out); 
-   console.log(parser.parseDataR(out));
+   dataParse = parser.parseDataR(out);
 
-   /* bd.query('INSERT INTO dataset_json values(DEFAULT,$1,current_timestamp,$2, $3)',[description,name_project,id_user], function(err, result){
+   console.log(dataParse.num_specimens);
+   console.log(dataParse.num_landmarks);
+   console.log(dataParse.dim);
+   console.log(dataParse.specimens);
+   console.log(dataParse.colors);
+   dataParse.project_id = params.project_id;
+   dataParse.dataset_name = params.name_dataset;
+     bd.query('INSERT INTO dataset_json values(DEFAULT,$1,$2,$3,$4,$5,$6,$7,$8,$9,NULL,NULL)',[params.project_id,params.name_dataset,nameFile,dataParse.num_specimens,dataParse.num_landmarks,dataParse.dim,JSON.stringify(dataParse.specimens),JSON.stringify(dataParse.colors),JSON.stringify(dataParse.names_specimen)], function(err, result){
         console.log(result);
          if(err){
            console.log(err);
            res.status(200).json( { "error": "Error in the connection with database." });
          }
          else{
-           res.status(200).json( { "error": "success" });;
+           res.status(200).json(JSON.stringify(dataParse));
          }
-       });*/
 
-    res.status(200).json(parser.parseDataR(out));
+       });
 }
 
 //Assign the event handler to an event:
