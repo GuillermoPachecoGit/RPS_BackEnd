@@ -11,15 +11,7 @@ router.post('/validate_user', function(req,res,next){
   bd.query('SELECT * FROM app_user WHERE email_address = $1',[email],function(err,result){
     console.log(result);
     if(result.rows.length == 0){
-      sess = req.session;
-      //Session set when user Request our app via URL
-      if(sess.email) {
-          res.redirect('/admin');
-      }
-      else {
-          res.redirect('dashboard.html');
-      }
-      res.status(500).json( { "error": "Username does not exist" });
+      res.status(200).json( { "error": "Username does not exist" });
     }else{
       if(result.rows[0].password != pass){
           res.status(500).json( { "error": "Password Incorrect" });
