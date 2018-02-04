@@ -3,8 +3,8 @@ var router = express.Router();
 var bd=require('../db_connect/db');
 
 router.get('/get_projects', function(req,res,next){
-    var id_user = req.query.id_user;
-  
+
+    var id_user = req.query.id;  
     bd.query('SELECT project_id,project_name FROM project WHERE user_id = $1',[id_user],function(err, result){
       if(err){
           res.status(500).json({ "error": "Error in request." });

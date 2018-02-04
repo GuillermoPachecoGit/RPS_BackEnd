@@ -49,7 +49,6 @@ router.get('/', function (req, res) {
 
 //Aca leo el archivo en R
 var myEventHandler = function (nameFile,params,res) {
-    console.log(nameFile);
     var path = "./public/datasets/".concat(nameFile);
     var out = R("r_scripts/test.R")
     .data({file : path})

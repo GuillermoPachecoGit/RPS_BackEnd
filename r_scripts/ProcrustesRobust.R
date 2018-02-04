@@ -864,12 +864,39 @@ vector.cross <- function(a, b) {
 
 }
 
+parseJSON <- function(r,f,c,data, consensus = FALSE) {
+
+  #creo la matriz
+  if(consensus){
+    R <- array(matrix(nrow = f, ncol = c, 0), c(f, c, r + 1), dimnames = NULL)
+  }
+  else{
+    R <- array(matrix(nrow = f, ncol = c, 0), c(f, c, r), dimnames = NULL)
+  }
+  
+  #comienzo iterar
+  for (i in 1:r) {
+      for(j in 1:c){
+        for(k in 1:f){
+          R[k,j,i] = data[i,k,j]
+        }
+      }
+  }
+  R
+}
+
 needs(igraph)
 needs(geomorph)
 needs(MASS)
+needs(jsonlite)
 attach(input[[1]])
-robgit(geomorph::readland.tps(file,warnmsg = FALSE))
+dataset <- robgit(parseJSON(num_specimen,num_landmark,dim, jsonlite::fromJSON(data)))
 
+n_land = nrow(dataset[,,1])
+n_spec = ncol(dataset[,1,])
+n_dim = nrow(dataset[1,,])
+json <- list(names_specimen = names,data = dataset, num_specimens = n_spec, num_landmarks = n_land , dim = n_dim)
+toJSON(json, pretty = TRUE, auto_unbox = TRUE)
 
 
 
