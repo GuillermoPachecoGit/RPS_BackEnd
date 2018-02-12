@@ -27,7 +27,6 @@ router.get('/', function (req, res) {
 
  router.post("/uploadFile", upload.array("uploads[]", 12), function(req, res) {
     console.log(req.body.project_id);
-    console.log(req.body.name_dataset);
 
     var ext = path.extname(req.files[0].originalname);
        if(ext !== '.tps' && ext !== '.nts' && ext !== '.txt') {
@@ -56,20 +55,16 @@ var myEventHandler = function (nameFile,params,res) {
     
    dataParse = parser.parseDataR(out);
 
-   console.log(dataParse.num_specimens);
-   console.log(dataParse.num_landmarks);
-   console.log(dataParse.dim);
-   console.log(dataParse.specimens);
-   console.log(dataParse.colors);
    dataParse.project_id = params.project_id;
-   dataParse.dataset_name = params.name_dataset;
-     bd.query('INSERT INTO dataset_json values(DEFAULT,$1,$2,$3,$4,$5,$6,$7,$8,$9,NULL,NULL)',[params.project_id,params.name_dataset,nameFile,dataParse.num_specimens,dataParse.num_landmarks,dataParse.dim,JSON.stringify(dataParse.specimens),JSON.stringify(dataParse.colors),JSON.stringify(dataParse.names_specimen)], function(err, result){
+   dataParse.dataset_name = params.dataset_name;
+     bd.query('INSERT INTO dataset_json values(DEFAULT,$1,$2,$3,$4,$5,$6,$7,$8,$9,NULL,NULL) RETURNING dataset_id',[params.project_id,params.dataset_name,nameFile,dataParse.numbers_of_specimen,dataParse.numbers_of_landmark,dataParse.dimention,JSON.stringify(dataParse.specimens),JSON.stringify(dataParse.colors),JSON.stringify(dataParse.specimen_name)], function(err, result){
         console.log(result);
          if(err){
            console.log(err);
            res.status(200).json( { "error": "Error in the connection with database." });
          }
          else{
+           dataParse.dataset_id = result.rows[0].dataset_id;
            res.status(200).json(JSON.stringify(dataParse));
          }
 

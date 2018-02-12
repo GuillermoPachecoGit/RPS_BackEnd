@@ -43,8 +43,6 @@ router.post('/runAnalize', function(req,res,next){
   var dataset_id = req.body.dataset_selected;
   var algorithm = req.body.algorithm_selected;
 
-  console.log(req.body);
-  //console.log(dataset_id);
   var data;
   //obtengo dataset
   bd.query('SELECT * FROM dataset_json where project_id = $1 and dataset_id = $2',[project_id,dataset_id],function(err, result){
@@ -56,20 +54,18 @@ router.post('/runAnalize', function(req,res,next){
         //corro el algoritmo
       var out;
       var prefix = '';
-      console.log(data['numbers_of_specimen']);
-      console.log(data['numbers_of_landmark']);
       switch(algorithm){
 
-        case true:
+        case 2:
           out = R("r_scripts/ProcrustesRobust.R")
           .data({"num_specimen" : data['numbers_of_specimen'],"num_landmark": data['numbers_of_landmark'] ,"dim": data['dimention'] , "data": parser.generateArraySpecimens(data['specimens']) })
           .callSync();
           prefix = 'GrP_'
         break;
 
-        case false:
+        case 1:
           out = R("r_scripts/ProcrustesCM.R")
-          .data({file : path})
+          .data({"num_specimen" : data['numbers_of_specimen'],"num_landmark": data['numbers_of_landmark'] ,"dim": data['dimention'] , "data": parser.generateArraySpecimens(data['specimens']) })
           .callSync();
           prefix = 'GIsP_'
         break;
@@ -80,46 +76,94 @@ router.post('/runAnalize', function(req,res,next){
 
       //guardo en la base
       dataParse.project_id = data['project_id'];
-      dataParse.dataset_name = prefix + data['dataset_name'];
+      dataParse.dataset_name = prefix+data['dataset_name'];
       dataParse.colors = data['colors'];
-      dataParse.names_specimen = data['specimen_name'];
-      res.status(200).json(JSON.stringify(dataParse));
-       /* bd.query('INSERT INTO dataset_json values(DEFAULT,$1,$2,$3,$4,$5,$6,$7,$8,$9,NULL,NULL)',[data['project_id'],data['name_dataset'],prefix+data['file_name'],dataParse.num_specimens,dataParse.num_landmarks,dataParse.dim,JSON.stringify(dataParse.specimens),JSON.stringify(data['colors']),JSON.stringify(data['specimen_name'])], function(err, result){
-           console.log(result);
+      dataParse.specimen_name = data['specimen_name'];
+      
+      bd.query('INSERT INTO dataset_json values(DEFAULT,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING dataset_id',[data['project_id'],data['dataset_name'],prefix+data['file_name'],dataParse.numbers_of_specimen,dataParse.numbers_of_landmark,dataParse.dimention,JSON.stringify(dataParse.specimens),JSON.stringify(data['colors']),JSON.stringify(data['specimen_name']),data['dataset_id'],data['project_id']], function(err, result){
             if(err){
               console.log(err);
               res.status(200).json( { "error": "Error in the connection with database." });
             }
             else{
-              res.status(200).json(JSON.stringify(dataParse));
+              dataParse.dataset_name = prefix+data['dataset_name']+'_'+result.rows[0].dataset_id;
+              dataParse.dataset_id = result.rows[0].dataset_id;
+
+              bd.query('UPDATE dataset_json SET dataset_name = $1 WHERE dataset_id = $2',[prefix+data['dataset_name']+'_'+result.rows[0].dataset_id,result.rows[0].dataset_id ], function(err, result){
+                  res.status(200).json(JSON.stringify(dataParse));
+              });
+              
             }
     
-          });*/
+          });
     }
   });
 
-  
-  
-
-  /*
-  dataParse = parser.parseDataR(out);
-
-  //guardo en la base
-  dataParse.project_id = params.project_id;
-  dataParse.dataset_name = prefix + params.dataset_name;
-    bd.query('INSERT INTO dataset_json values(DEFAULT,$1,$2,$3,$4,$5,$6,$7,$8,$9,NULL,NULL)',[params.project_id,params.name_dataset,prefix+params.file_name,dataParse.num_specimens,dataParse.num_landmarks,dataParse.dim,JSON.stringify(dataParse.specimens),JSON.stringify(params.colors),JSON.stringify(params.specimen_name)], function(err, result){
-       console.log(result);
-        if(err){
-          console.log(err);
-          res.status(200).json( { "error": "Error in the connection with database." });
-        }
-        else{
-          res.status(200).json(JSON.stringify(dataParse));
-        }
-
-      });
-      */
  }
 );
+
+
+
+router.post('/runDistance', function(req,res,next){
+  var project_id = req.body.project_id;
+  var dataset_id = req.body.dataset_id;
+  var algorithm = req.body.algorithm_selected;
+
+  var data;
+  //obtengo dataset
+  bd.query('SELECT * FROM dataset_json where project_id = $1 and dataset_id = $2',[project_id,dataset_id],function(err, result){
+    if(err){
+        res.status(200).json({ "error": "Error in request." });
+      }
+      else{
+        data = result.rows[0];
+        //corro el algoritmo
+      var out;
+      var prefix = '';
+      switch(algorithm){
+
+        case 2:
+          out = R("r_scripts/RobustDistance.R")
+          .data({"num_specimen" : data['numbers_of_specimen'],"num_landmark": data['numbers_of_landmark'] ,"dim": data['dimention'] , "data": parser.generateArraySpecimens(data['specimens']) })
+          .callSync();
+          prefix = 'rD_'
+        break;
+
+        case 1:
+          out = R("r_scripts/CMDistance.R")
+          .data({"num_specimen" : data['numbers_of_specimen'],"num_landmark": data['numbers_of_landmark'] ,"dim": data['dimention'] , "data": parser.generateArraySpecimens(data['specimens']) })
+          .callSync();
+          prefix = 'lsD_'
+        break;
+
+      }
+
+      
+      var dataR  = JSON.parse(out);
+      dataR.specimen_name = data['specimen_name'];
+      console.log(dataR);
+            
+      bd.query('INSERT INTO distance values(DEFAULT,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING dataset_id',[data['project_id'],data['dataset_name'],prefix+data['file_name'],dataParse.numbers_of_specimen,dataParse.numbers_of_landmark,dataParse.dimention,JSON.stringify(dataParse.specimens),JSON.stringify(data['colors']),JSON.stringify(data['specimen_name']),data['dataset_id'],data['project_id']], function(err, result){
+            if(err){
+              console.log(err);
+              res.status(200).json( { "error": "Error in the connection with database." });
+            }
+            else{
+              dataParse.dataset_name = prefix+data['dataset_name']+'_'+result.rows[0].dataset_id;
+              dataParse.dataset_id = result.rows[0].dataset_id;
+
+              bd.query('UPDATE dataset_json SET dataset_name = $1 WHERE dataset_id = $2',[prefix+data['dataset_name']+'_'+result.rows[0].dataset_id,result.rows[0].dataset_id ], function(err, result){
+                  res.status(200).json(JSON.stringify(dataParse));
+              });
+              
+            }
+    
+          });
+    }
+
+  });
+
+ });
+
 
 module.exports = router;

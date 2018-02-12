@@ -49,13 +49,10 @@ class ParseJSON {
     }
 
     generateArraySpecimens(data){
-        console.log(data);
         var result = [];
 
         for (let index = 0; index < data.length; index++) {
             const element = data[index];
-            console.log(element);
-          //  console.log(data[]);
             result.push(element['specimen'+index]);
         }
         console.log(JSON.stringify(result));
