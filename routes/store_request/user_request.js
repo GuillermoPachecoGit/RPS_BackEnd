@@ -140,27 +140,37 @@ router.post('/runDistance', function(req,res,next){
 
       
       var dataR  = JSON.parse(out);
+
       dataR.specimen_name = data['specimen_name'];
       console.log(dataR);
             
-      bd.query('INSERT INTO distance values(DEFAULT,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING dataset_id',[data['project_id'],data['dataset_name'],prefix+data['file_name'],dataParse.numbers_of_specimen,dataParse.numbers_of_landmark,dataParse.dimention,JSON.stringify(dataParse.specimens),JSON.stringify(data['colors']),JSON.stringify(data['specimen_name']),data['dataset_id'],data['project_id']], function(err, result){
+      bd.query('INSERT INTO distance values(DEFAULT,$1,$2,$3,$4,$5) RETURNING distance_id',[data['dataset_id'],data['project_id'],prefix+data['file_name'],JSON.stringify(dataR.data),JSON.stringify(dataR.specimen_name)], function(err, result){
             if(err){
               console.log(err);
               res.status(200).json( { "error": "Error in the connection with database." });
             }
             else{
-              dataParse.dataset_name = prefix+data['dataset_name']+'_'+result.rows[0].dataset_id;
-              dataParse.dataset_id = result.rows[0].dataset_id;
+              dataR.distance_name = prefix+data['dataset_name']+'_'+result.rows[0].distance_id;
+              dataR.distance_id = result.rows[0].distance_id;
 
-              bd.query('UPDATE dataset_json SET dataset_name = $1 WHERE dataset_id = $2',[prefix+data['dataset_name']+'_'+result.rows[0].dataset_id,result.rows[0].dataset_id ], function(err, result){
-                  res.status(200).json(JSON.stringify(dataParse));
+              bd.query('UPDATE distance SET distance_name = $1 WHERE distance_id = $2',[prefix+data['dataset_name']+'_'+result.rows[0].distance_id,result.rows[0].distancet_id ], function(err, result){
+                
+                console.log(JSON.stringify(dataR.specimen_name) === JSON.stringify({}));
+                if(JSON.stringify(dataR.specimen_name) === JSON.stringify({})){
+                  dataR.specimen_name = [];
+                  for (let index = 0; index < dataR.dimention; index++) {
+                    dataR.specimen_name.push('trace'+index);
+                  }
+                }
+                
+                console.log(dataR);
+                res.status(200).json(JSON.stringify(dataR));
               });
               
             }
     
           });
     }
-
   });
 
  });

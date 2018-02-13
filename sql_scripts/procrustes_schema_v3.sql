@@ -110,6 +110,7 @@ CREATE TABLE DISTANCE(
     distance_id serial NOT NULL,
     dataset_id_ref int8 NOT NULL,
     project_id_ref int8 NOT NULL,
+    distance_name nvarchar(70) NOT NULL,
     distance_points json NOT NULL,
     distance_specimes_names json NOT NULL,
     CONSTRAINT PK_DISTANCE PRIMARY KEY (distance_id,dataset_id_ref)
