@@ -111,8 +111,8 @@ CREATE TABLE DISTANCE(
     dataset_id_ref int8 NOT NULL,
     project_id_ref int8 NOT NULL,
     distance_name nvarchar(70) NOT NULL,
-    distance_points json NOT NULL,
-    distance_specimes_names json NOT NULL,
+    [data] json NOT NULL,
+    specimen_name json NOT NULL,
     CONSTRAINT PK_DISTANCE PRIMARY KEY (distance_id,dataset_id_ref)
 )
 ;
@@ -120,4 +120,28 @@ CREATE TABLE DISTANCE(
 ALTER TABLE DISTANCE ADD CONSTRAINT FK_DISTANCE_DATASET
     FOREIGN KEY (dataset_id_ref,project_id_ref)
     REFERENCES dataset_json(dataset_id,project_id)
+;
+
+ALTER TABLE distance add column  dimention int8;
+
+CREATE TABLE ORDINATION(
+    ordination_id serial NOT NULL,
+    dataset_id_ref int8 NOT NULL,
+    project_id_ref int8 NOT NULL,
+    distance_id_ref int8 NOT NULL,
+    ordination_name varchar(70) NOT NULL,
+    data json NOT NULL,
+    specimen_name json NOT NULL,
+    CONSTRAINT PK_ordination PRIMARY KEY (ordination_id,dataset_id_ref)
+)
+;
+
+ALTER TABLE ORDINATION ADD CONSTRAINT FK_ORDINATION_DATASET
+    FOREIGN KEY (dataset_id_ref,project_id_ref)
+    REFERENCES dataset_json(dataset_id,project_id)
+;
+
+ALTER TABLE ORDINATION ADD CONSTRAINT FK_ORDINATION_DISTANCE
+    FOREIGN KEY (distance_id_ref)
+    REFERENCES distance(distance_id)
 ;
