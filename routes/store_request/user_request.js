@@ -192,13 +192,13 @@ router.post('/runDistance', function(req,res,next){
     }
       else
     {
-        data = result.rows[0];
-        //corro el algoritmo
+      data = result.rows[0];
+      //corro el algoritmo
       var out;
       var prefix = '';
       var dimention = 0;
       if(data['dimention'] == 3){
-        dimention = 3
+        dimention = 2
       }
       else{
         dimention = 2;
@@ -222,21 +222,20 @@ router.post('/runDistance', function(req,res,next){
 
       }
 
-      var dataR  = { };
-      dataR.data = out;
+      var dataR  = JSON.parse(out);
       dataR.dataset_id = data['dataset_id_ref'];
       dataR.project_id = data['project_id_ref'];
       dataR.specimen_name = data['specimen_name'];
       
 
-      bd.query('INSERT INTO ordination values(DEFAULT,$1,$2,$3,$4,$5,$6) RETURNING ordination_id',[data['dataset_id_ref'],data['project_id_ref'],data['distance_id'],prefix+data['distance_name'],JSON.stringify(dataR.data),JSON.stringify(data['specimen_name'])], function(err, result){
+      bd.query('INSERT INTO ordination values(DEFAULT,$1,$2,$3,$4,$5,$6) RETURNING ordination_id,ordination_name',[data['dataset_id_ref'],data['project_id_ref'],data['distance_id'],prefix+data['distance_name'],JSON.stringify(dataR.data),JSON.stringify(data['specimen_name'])], function(err, result){
             if(err){
               console.log(err);
               res.status(200).json( { "error": "Error in the connection with database." });
             }
             else{
-              dataR.distance_name = prefix+data['distance_name']+'_'+result.rows[0].distance_id;
-              dataR.ordination_id = result.rows[0].distance_id;
+              dataR.ordination_name = prefix+result.rows[0].ordination_name+'_'+result.rows[0].ordination_id;
+              dataR.ordination_id = result.rows[0].ordination_id;
               bd.query('UPDATE ordination SET ordination_name = $1 WHERE ordination_id = $2',[prefix+data['distance_name']+'_'+result.rows[0].ordination_id,result.rows[0].ordination_id ], function(err, result){
                 if(JSON.stringify(dataR.specimen_name) === JSON.stringify({})){
                   dataR.specimen_name = [];
@@ -244,7 +243,19 @@ router.post('/runDistance', function(req,res,next){
                     dataR.specimen_name.push('trace'+index);
                   }
                 }
-                res.status(200).json(JSON.stringify(dataR));
+                //it set the colors
+                bd.query('SELECT colors FROM dataset_json where project_id = $1 and dataset_id = $2',[project_id, dataR.dataset_id],function(err, result){
+                  if(err){
+                      res.status(200).json({ "error": "Error in request of specimen colors." });
+                  }
+                  else
+                  {
+                      dataR.colors = result.rows[0].colors;
+                      res.status(200).json(JSON.stringify(dataR));
+                  }
+                });
+
+                
               });
             }
           });
