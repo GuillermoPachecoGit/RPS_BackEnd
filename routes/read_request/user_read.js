@@ -9,7 +9,6 @@ router.post('/validate_user', function(req,res,next){
   var pass = req.body.pass;
 
   bd.query('SELECT * FROM app_user WHERE email_address = $1',[email],function(err,result){
-    console.log(result);
     if(result.rows.length == 0){
       res.status(200).json( { "error": "Username does not exist" });
     }else{

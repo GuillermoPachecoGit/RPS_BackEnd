@@ -890,7 +890,7 @@ needs(geomorph)
 needs(MASS)
 needs(jsonlite)
 attach(input[[1]])
-dataset <- robgit(parseJSON(num_specimen,num_landmark,dim, jsonlite::fromJSON(data)), consenso = show_consensus)
+dataset <- robgit(parseJSON(num_specimen,num_landmark,dim, jsonlite::fromJSON(data)),consenso = show_consensus)
 
 n_land = nrow(dataset[,,1])
 n_spec = ncol(dataset[,1,])

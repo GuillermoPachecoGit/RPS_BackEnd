@@ -44,7 +44,7 @@ univMDSeucl <- function(D, k) {
             for (it in 1:floor(sqrt(iter))) {
                 print(iter)
                 Z <- computeIntersections(X, ii, D)
-                a <- t(t(apply(Z, 1, mean)))
+                a <- t(t(apply(Z, 2, mean)))
                 x1 <- cbind(t(t(X[, 1:ii - 1])), a)
                 if ((ii + 1) <= nl) {
 

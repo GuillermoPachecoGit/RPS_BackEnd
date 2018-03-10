@@ -31,7 +31,7 @@ dataset <- result['coords'][[1]]
 n_land = nrow(dataset[,,1])
 n_spec = ncol(dataset[,1,])
 n_dim = nrow(dataset[1,,])
-json <- list(specimen_name = rownames(result['data'][[1]][0]),data = dataset, numbers_of_specimen = n_spec, numbers_of_landmark = n_land , dimention = n_dim)
+json <- list(specimen_name = rownames(result['data'][[1]][0]),data = dataset, numbers_of_specimen = n_spec, numbers_of_landmark = n_land , dimention = n_dim,consensus =  result[['consensus']] )
 toJSON(json, pretty = TRUE, auto_unbox = TRUE)
 
 

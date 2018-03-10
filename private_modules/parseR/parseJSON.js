@@ -2,7 +2,7 @@ class ParseJSON {
 
   constructor() { }
   
-    parseDataR(out) {
+    parseDataR(out,show_consensus) {
         var data_R =  JSON.parse(out);
         var dataset = data_R.data;
 
@@ -11,6 +11,7 @@ class ParseJSON {
         var n_specimen = dataset[0][0].length;
         
         data_R.specimens = [];
+        data_R.specimen_name = [];
 
         var specimen;
         for (let i_spec = 0; i_spec < n_specimen; i_spec++) {
@@ -29,6 +30,15 @@ class ParseJSON {
             var name = "specimen".concat(i_spec);
             
             data_R.specimens.push({ [name] : specimen});
+
+
+            if((i_spec == (n_specimen-1)) && show_consensus){
+                data_R.specimen_name.push("Consensus");
+            }else{
+                data_R.specimen_name.push("trace".concat(i_spec));
+            }
+            
+            
         }
 
         delete data_R.data;
@@ -44,7 +54,6 @@ class ParseJSON {
             } while (colors.indexOf(color) >= 0);
             colors.push("#" + ("000000" + color.toString(16)).slice(-6));
         }
-        console.log(colors);
         return colors;
     }
 
@@ -55,7 +64,6 @@ class ParseJSON {
             const element = data[index];
             result.push(element['specimen'+index]);
         }
-        console.log(JSON.stringify(result));
         return JSON.stringify(result);
     }
 
