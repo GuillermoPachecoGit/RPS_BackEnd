@@ -26,7 +26,6 @@ router.get('/', function (req, res) {
  })
 
  router.post("/uploadFile", upload.array("uploads[]", 12), function(req, res) {
-    console.log(req.body.project_id);
 
     var ext = path.extname(req.files[0].originalname);
        if(ext !== '.tps' && ext !== '.nts' && ext !== '.txt') {
@@ -48,12 +47,13 @@ router.get('/', function (req, res) {
 
 //Aca leo el archivo en R
 var myEventHandler = function (nameFile,params,res) {
+    console.log(params);
     var path = "./public/datasets/".concat(nameFile);
     var out = R("r_scripts/test.R")
-    .data({file : path})
+    .data({file : path, "type_file": params.type_file})
     .callSync();
     
-   dataParse = parser.parseDataR(out);
+   dataParse = parser.OnlyParseDataR(out);
 
    dataParse.project_id = params.project_id;
    dataParse.dataset_name = params.dataset_name;

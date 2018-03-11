@@ -68,11 +68,8 @@ router.post('/runAnalize', function(req,res,next){
           break;
         }
 
-        
         dataParse = parser.parseDataR(out,show_consensus);
-
         dataParse.colors = data['colors'];
-
         //special case of CM algorithm
         if(algorithm == 1 && show_consensus){
           var name = 'specimen'+(dataParse.specimens.length);
@@ -81,8 +78,6 @@ router.post('/runAnalize', function(req,res,next){
           dataParse.numbers_of_specimen = dataParse.numbers_of_specimen + 1;
           dataParse.colors.push('#ea0b0b');
         }
-
-
         dataParse.project_id = data['project_id'];    
         //reutilizo los nombres 
         if(JSON.stringify(data['specimen_name']) !== JSON.stringify({})){

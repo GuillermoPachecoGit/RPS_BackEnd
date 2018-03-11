@@ -7,13 +7,12 @@ Hechos:
 -ordenamientos ver en forma de cuadrado --> Hecho, no se puede ajustar escala en l configuraciones
 --mostrar consenso (opcional) --> HECHO
 -modo de carga.. --> HECHO
+--eliminar landmarks, sacar landmarks de cada specimens y mostrar solo una vez enumerados de 1..n --> Hechos
+-agregar nts, txt.
 
 Faltan:
-
-
--agregar nts, txt.
--eliminar landmarks, sacar landmarks de cada specimens y mostrar solo una vez enumerados de 1..n
 -imagenes home
 
 lO ULTIMO A HACER
 --ver ordinations CM
+-control de errores
