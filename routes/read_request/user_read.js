@@ -13,7 +13,7 @@ router.post('/validate_user', function(req,res,next){
       res.status(200).json( { "error": "Username does not exist" });
     }else{
       if(result.rows[0].password != pass){
-          res.status(500).json( { "error": "Password Incorrect" });
+          res.status(200).json( { "error": "Password Incorrect" });
       }else{
          res.status(200).json( { "error": "success","id_user": result.rows[0].user_id } );
       }

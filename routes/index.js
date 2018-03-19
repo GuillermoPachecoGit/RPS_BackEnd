@@ -25,14 +25,36 @@ router.get('/', function (req, res) {
     res.send('Welcome to RPS API');
  })
 
- router.post("/uploadFile", upload.array("uploads[]", 12), function(req, res) {
 
+
+ router.post("/uploadFile", upload.array("uploads[]", 12), function(req, res) {
+    console.log('llegue al server');
     var ext = path.extname(req.files[0].originalname);
        if(ext !== '.tps' && ext !== '.nts' && ext !== '.txt') {
-        console.log("archivo invalido");
-              res.status(200).json( { "error": "error" });
+            console.log("archivo invalido");
+            res.status(200).json( { "error": "Extension file invalid." });
        }
        else{
+                switch (req.body.type_file) {
+                    case 1:
+                        if(ext != '.tps'){
+                            console.log("archivo invalido");
+                            res.status(200).json( { "error": "Extension file not is correct." });
+                        }  
+                        break;
+                    case 2:
+                        if(ext != '.nts'){
+                            console.log("archivo invalido");
+                            res.status(200).json( { "error": "Extension file not is correct." });
+                        }
+                        break;
+                    case 3:
+                        if(ext != '.txt'){
+                            console.log("archivo invalido");
+                            res.status(200).json( { "error": "Extension file not is correct." });
+                        }
+                        break;
+                }
               var stream = fs.createReadStream('./temp/'+req.files[0].filename).on('error',function(e){console.log(e);}).pipe(fs.createWriteStream('./public/datasets/'+req.files[0].originalname)).on('error',function(e){console.log(e);});
               stream.on('finish', function () {
                   //borramos el archivo temporal creado
@@ -49,7 +71,7 @@ router.get('/', function (req, res) {
 var myEventHandler = function (nameFile,params,res) {
     console.log(params);
     var path = "./public/datasets/".concat(nameFile);
-    var out = R("r_scripts/test.R")
+    var out = R("r_scripts/loadDataset.R")
     .data({file : path, "type_file": params.type_file})
     .callSync();
     

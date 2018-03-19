@@ -9,10 +9,20 @@ Hechos:
 -modo de carga.. --> HECHO
 --eliminar landmarks, sacar landmarks de cada specimens y mostrar solo una vez enumerados de 1..n --> Hechos
 -agregar nts, txt.
-
-Faltan:
 -imagenes home
 
-lO ULTIMO A HACER
---ver ordinations CM
--control de errores
+Haciendo:
+--control de errores
+
+Falta:
+--ver ordinations CM --> in R
+
+
+16/08/2017
+-tortoise deploy app (ui)
+
+-sacar ejes de graficos
+-corregir nombre consenso
+-Analisys in process.....
+-setear el rango por el max de cada longitud
+-
