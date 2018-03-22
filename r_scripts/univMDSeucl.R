@@ -30,21 +30,19 @@ distAllPairsL2 <- function(X) {
 
 
 univMDSeucl <- function(D, k) {
-    iteraciones <- 100
+    iteraciones <- 150
     tol <- 1e-09
     nl <- nrow(D)
     X <- t(randomMatrix(nl, k))
-
     Dk <- distAllPairsL2(X)
     c <- sum((D - Dk)^2)
     cant <- 0
-
     for (iter in 1:iteraciones) {
         for (ii in 1:nl) {
             for (it in 1:floor(sqrt(iter))) {
                 print(iter)
                 Z <- computeIntersections(X, ii, D)
-                a <- t(t(apply(Z, 2, mean)))
+                a <- t(t(apply(Z, 1, mean)))
                 x1 <- cbind(t(t(X[, 1:ii - 1])), a)
                 if ((ii + 1) <= nl) {
 
@@ -68,6 +66,18 @@ univMDSeucl <- function(D, k) {
     return(t(X))
 }
 
+
+sqrtm <- function(x) {
+    z <- x
+    for (i in 1:ncol(x)) {
+        for (j in 1:nrow(x)) {
+            z[i, j] <- sqrt(as.complex(x[i, j]))
+        }
+    }
+    return(z)
+}
+
+
 needs(igraph)
 needs(geomorph)
 needs(MASS)
@@ -76,6 +86,6 @@ needs(matlab)
 attach(input[[1]])
 
 
-result <- univMDSeucl(data,dim)
+result <- univMDSeucl(jsonlite::fromJSON(data),2)
 json <- list(data = result)
 toJSON(json, pretty = TRUE, auto_unbox = TRUE)

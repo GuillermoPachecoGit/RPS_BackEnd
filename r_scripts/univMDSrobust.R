@@ -29,7 +29,7 @@ distAllPairsL2 <- function(X) {
 }
 
 univMDSrobust <- function(D, k) {
-    iteraciones <- 10
+    iteraciones <- 150
     tol <- 1e-09
     nl <- nrow(D)  #numer of specimens
     X <- t(randomMatrix(nl, k))
@@ -102,7 +102,6 @@ spatialmed_landmark <- function(X) {
         # print('imprimo s:') print(aux)
         # print('******************************************************') print('AUX: ') print(aux)
         for (k in 1:n) {
-
             # print('A[k,]') print(t(as.matrix(A[k,]))) print(norm(aux - t(as.matrix(A[k,])) ) )
             if (norm(aux - t(as.matrix(A[k, ]))) == 0) {
                 s[1, k] <- tol
