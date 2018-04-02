@@ -1,6 +1,4 @@
-﻿
-drop table ordination
-
+﻿drop table ordination
 
 CREATE TABLE ORDINATION(
     ordination_id serial NOT NULL,
@@ -25,6 +23,7 @@ ALTER TABLE ORDINATION ADD CONSTRAINT FK_ORDINATION_DISTANCE
     REFERENCES distance(distance_id)
 ;
 
-select *
-from ordination
+
+ALTER TABLE dataset_json
+ADD COLUMN show_consensus int8 NOT NULL;
 

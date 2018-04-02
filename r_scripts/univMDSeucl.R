@@ -87,5 +87,5 @@ attach(input[[1]])
 
 
 result <- univMDSeucl(jsonlite::fromJSON(data),2)
-json <- list(data = result)
+json <- list(data = result, range = max( max(result[,1]),max(result[,2]) ) )
 toJSON(json, pretty = TRUE, auto_unbox = TRUE)

@@ -46,6 +46,18 @@ app.use('/db_request_country', readCountry);
 var storeUser = require('./routes/store_request/user_request');
 app.use('/db_request_user_w', storeUser);
 
+//Path --> "/api/db_request_ordination_w/"
+var ordinationUser = require('./routes/store_request/ordination_request');
+app.use('/db_request_ordination_w',ordinationUser);
+
+//Path --> "/api/db_request_distance_w/"
+var distanceUser = require('./routes/store_request/distance_request');
+app.use('/db_request_distance_w',distanceUser);
+
+//Path --> "/api/db_request_analisys_w/"
+var analisysUser = require('./routes/store_request/analisys_request');
+app.use('/db_request_analisys_w',analisysUser);
+
 //Path --> "/api/db_request_dataset_w/"
 var storeDataset = require('./routes/store_request/dataset_request');
 app.use('/db_request_dataset_w', storeDataset);

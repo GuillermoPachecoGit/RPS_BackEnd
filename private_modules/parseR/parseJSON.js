@@ -2,7 +2,7 @@ class ParseJSON {
 
   constructor() { }
   
-    parseDataR(out,show_consensus) {
+    parseDataR(out,show_consensus,algorithm) {
         var data_R =  JSON.parse(out);
         var dataset = data_R.data;
 
@@ -31,7 +31,7 @@ class ParseJSON {
             data_R.specimens.push({ [name] : specimen});
             
             
-            if((i_spec == (n_specimen-1)) && show_consensus){
+            if(algorithm != 1 &&  (i_spec == (n_specimen-1)) && show_consensus){
                 data_R.specimen_name.push("Consensus");
             }else{
                 data_R.specimen_name.push("trace".concat(i_spec));

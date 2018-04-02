@@ -1,8 +1,8 @@
-DELETE FROM public.app_user
-DELETE FROM public.dataset_json
-DELETE FROM public.distance
-DELETE FROM public.ordination
-DELETE FROM public.project
+DELETE FROM public.app_user;
+DELETE FROM public.dataset_json;
+DELETE FROM public.distance;
+DELETE FROM public.ordination;
+DELETE FROM public.project;
 
 
  

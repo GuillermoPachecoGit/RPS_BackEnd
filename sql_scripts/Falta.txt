@@ -1,28 +1,11 @@
-Correcciones:
-Hechos: 
--visualizar en 2D --> HECHO
--nombre o name de dataset --> HECHO
--ajustar escalas iguales --> graficos Hecho --> solo se puede ajustar a un cuadrado, la escala no es posible.
--Hablar con Vivi --> servidor  --> HECHO --> Falta implementar en server
--ordenamientos ver en forma de cuadrado --> Hecho, no se puede ajustar escala en l configuraciones
---mostrar consenso (opcional) --> HECHO
--modo de carga.. --> HECHO
---eliminar landmarks, sacar landmarks de cada specimens y mostrar solo una vez enumerados de 1..n --> Hechos
--agregar nts, txt.
--imagenes home
 
-Haciendo:
---control de errores
+-sacar ejes de graficos --> en 2D no pude, seguir mirando
 
-Falta:
---ver ordinations CM --> in R
+-anidamientos de proyecto --> en proceso
 
 
-16/08/2017
--tortoise deploy app (ui)
+-eliminar dataset, proyecto de base y vista.
+-agregar variables estatica ip server 
 
--sacar ejes de graficos
--corregir nombre consenso
--Analisys in process.....
--setear el rango por el max de cada longitud
--
+
+

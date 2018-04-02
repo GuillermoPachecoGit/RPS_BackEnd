@@ -10,10 +10,10 @@
 --  DROP TABLE distance cascade
 
 -- 
--- CREATE OR REPLACE DOMAIN email AS text
--- CHECK( 
--- 	VALUE  ~* '^[_a-z0-9-]+(.[_a-z0-9-]+)*@[a-z0-9-]+(.[a-z0-9-]+)*(.[a-z]{2,4})$'
--- );
+ CREATE DOMAIN email AS text
+ CHECK( 
+ 	VALUE  ~* '^[_a-z0-9-]+(.[_a-z0-9-]+)*@[a-z0-9-]+(.[a-z0-9-]+)*(.[a-z]{2,4})$'
+ );
 -- 
 -- TABLE: COUNTRY 
 --
@@ -110,8 +110,8 @@ CREATE TABLE DISTANCE(
     distance_id serial NOT NULL,
     dataset_id_ref int8 NOT NULL,
     project_id_ref int8 NOT NULL,
-    distance_name nvarchar(70) NOT NULL,
-    [data] json NOT NULL,
+    distance_name varchar(70) NOT NULL,
+    data json NOT NULL,
     specimen_name json NOT NULL,
     CONSTRAINT PK_DISTANCE PRIMARY KEY (distance_id,dataset_id_ref)
 )
@@ -142,6 +142,6 @@ ALTER TABLE ORDINATION ADD CONSTRAINT FK_ORDINATION_DATASET
 ;
 
 ALTER TABLE ORDINATION ADD CONSTRAINT FK_ORDINATION_DISTANCE
-    FOREIGN KEY (distance_id_ref)
-    REFERENCES distance(distance_id)
+    FOREIGN KEY (distance_id_ref,dataset_id_ref)
+    REFERENCES distance(distance_id,dataset_id_ref)
 ;

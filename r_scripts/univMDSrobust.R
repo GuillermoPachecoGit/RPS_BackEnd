@@ -146,6 +146,6 @@ needs(jsonlite)
 attach(input[[1]])
 
 
-result <- univMDSrobust(jsonlite::fromJSON(data),dim)
-json <- list(data = result, dimention = nrow(result))
+result <- univMDSrobust(jsonlite::fromJSON(data),2)
+json <- list(data = result, dimention = nrow(result),range =  max( max(result[,1]),max(result[,2])))
 toJSON(json, pretty = TRUE, auto_unbox = TRUE)
