@@ -9,6 +9,7 @@ var parser = new parseJSON();
 router.post('/runDistance', function(req,res,next){
     var project_id = req.body.project_id;
     var dataset_id = req.body.dataset_id;
+    console.log(req.body);
     var algorithm = req.body.algorithm_selected;
     var data;
     //obtengo dataset
@@ -45,12 +46,14 @@ router.post('/runDistance', function(req,res,next){
                 res.status(200).json( { "error": "Error in the connection with database." });
               }
               else{
-                dataR.distance_name = prefix+data['dataset_name']+'_'+result.rows[0].distance_id;
+
+                console.log(result.rows[0]['distance_id']);
+                dataR.distance_name = prefix+data['dataset_name']+'_'+result.rows[0]['distance_id'];
                 dataR.distance_id = result.rows[0].distance_id;
-                dataR.project_id = data['project_id'];
-                dataR.dataset_id = data['dataset_id'];
+                dataR.project_id_ref = data['project_id'];
+                dataR.dataset_id_ref = data['dataset_id'];
   
-                bd.query('UPDATE distance SET distance_name = $1 WHERE distance_id = $2',[prefix+data['dataset_name']+'_'+result.rows[0].distance_id,result.rows[0].distancet_id ], function(err, result){
+                bd.query('UPDATE distance SET distance_name = $1 WHERE distance_id = $2',[prefix+data['dataset_name']+'_'+result.rows[0].distance_id, dataR.distance_id], function(err, result){
                   
                   console.log(JSON.stringify(dataR.specimen_name) === JSON.stringify({}));
                   if(JSON.stringify(dataR.specimen_name) === JSON.stringify({})){

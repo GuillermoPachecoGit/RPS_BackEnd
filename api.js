@@ -66,7 +66,9 @@ app.use('/db_request_dataset_w', storeDataset);
 var storeProject = require('./routes/store_request/project_request');
 app.use('/db_request_project_w', storeProject);
 
-
+//Path --> "/api/db_request_remove_w/"
+var removeManagement = require('./routes/store_request/remove_management');
+app.use('/db_request_remove_w', removeManagement);
 
 //Test upload file static
 app.use(express.static('public'));

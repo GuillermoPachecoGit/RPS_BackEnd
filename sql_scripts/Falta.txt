@@ -1,11 +1,8 @@
 
 -sacar ejes de graficos --> en 2D no pude, seguir mirando
-
--anidamientos de proyecto --> en proceso
-
-
--eliminar dataset, proyecto de base y vista.
+-eliminar dataset servicios
 -agregar variables estatica ip server 
+-mostrar los resultados de proyecciones
 
 
-
+-seguir con ordinations, agregar colores en la tabla "ordination"

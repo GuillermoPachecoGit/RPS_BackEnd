@@ -407,8 +407,8 @@ robgit <- function(X, consenso = FALSE) {
         X <- adjustment3D(X)
         adjustament = TRUE
     }
-    tol <- 1e-09
-    iterTotal <- 20
+    tol <- 1e-04
+    iterTotal <- 1
     Z <- X
     f = nrow(Z[, , 1])
     c = ncol(Z[, , 1])
@@ -448,40 +448,40 @@ robgit <- function(X, consenso = FALSE) {
     Aux <- X
     conteo <- matrix(nrow = f + 1, ncol = r, 0)
     conteomed <- matrix(nrow = 1, ncol = r, 0)
-    while ((z <= iterTotal) & (medland(Y - W, 1) > tol)) {
+    while ((z <= iterTotal) ) { #& (medland(Y - W, 1) > tol)
         for (k in 1:r) {
             Aux[, , k] <- scaleSpecimen(Aux[, , k], Y)
             list_out <- rotation(Aux[, , k], H[, , k], Y)
             Aux[, , k] <- list_out[[1]]
             H[, , k] <- list_out[[2]]
             Aux[, , k] <- translation(Aux[, , k], Y, f)
-            for (i in 1:f) {
-                auxres[i, k] <- norm(t(as.matrix(Y[i, ])) - t(as.matrix(Aux[i, , k])), "F")
-                if (auxres[i, k] <= res[i, k]) {
-                  conteo[i, k] <- 1
-                } else {
-                  conteo[i, k] <- 0
-                }
-            }
-            auxresme[1, k] <- median(auxres[, k])
-            auxresme[1, k]
+            #for (i in 1:f) {
+            #    auxres[i, k] <- norm(t(as.matrix(Y[i, ])) - t(as.matrix(Aux[i, , k])), "F")
+            #    if (auxres[i, k] <= res[i, k]) {
+            #       conteo[i, k] <- 1
+            #    } else {
+            #      conteo[i, k] <- 0
+            #    }
+            #}
+            #auxresme[1, k] <- median(auxres[, k])
+            #auxresme[1, k]
         }
-        for (k in 1:r) {
-            if (auxresme[1, k] <= resme[1, k]) {
-                X[, , k] <- Aux[, , k]
-                conteomed[1, k] <- 1
-            } else {
-                conteomed[1, k] <- 0
-            }
-        }
-        conteo[f + 1, ] <- matrix(nrow = 1, ncol = r, 0)
-        conteo[f + 1, ] <- (100 * apply(conteo, 2, sum))/f
-        for (k in 1:r) {
-            for (i in 1:f) {
-                res[i, k] <- norm(t(as.matrix(Y[i, ])) - t(as.matrix(X[i, , k])), "F")
-            }
-            resme[1, k] <- median(res[, k])
-        }
+        #for (k in 1:r) {
+        #    if (auxresme[1, k] <= resme[1, k]) {
+        #        X[, , k] <- Aux[, , k]
+        #        conteomed[1, k] <- 1
+        #    } else {
+        #        conteomed[1, k] <- 0
+        #    }
+        #}
+        #conteo[f + 1, ] <- matrix(nrow = 1, ncol = r, 0)
+        #conteo[f + 1, ] <- (100 * apply(conteo, 2, sum))/f
+        #for (k in 1:r) {
+        #    for (i in 1:f) {
+        #        res[i, k] <- norm(t(as.matrix(Y[i, ])) - t(as.matrix(X[i, , k])), "F")
+        #    }
+        #    resme[1, k] <- median(res[, k])
+        #}
         W <- Y
         Y <- spatialmed_config(X)
         z <- (z + 1)
