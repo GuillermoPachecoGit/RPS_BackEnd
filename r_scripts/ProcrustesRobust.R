@@ -408,7 +408,7 @@ robgit <- function(X, consenso = FALSE) {
         adjustament = TRUE
     }
     tol <- 1e-04
-    iterTotal <- 1
+    iterTotal <- 50
     Z <- X
     f = nrow(Z[, , 1])
     c = ncol(Z[, , 1])
