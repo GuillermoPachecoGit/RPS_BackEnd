@@ -143,4 +143,21 @@ router.get('/get_ordinationById', function(req,res,next){
   });
 });
 
+
+router.get('/get_user_by_id', function(req,res,next){
+  var user_id = req.query.id;
+  
+  bd.query('SELECT * FROM app_user WHERE user_id = $1',[user_id],function(err, result){
+    if(err){
+        console.log(err);
+        res.status(200).json({ "error": err});
+      }
+      else{
+        console.log(result.rows);
+        res.status(200).json(result.rows[0]);
+      }
+  });
+});
+
+
   module.exports = router;

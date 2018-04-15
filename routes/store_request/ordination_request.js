@@ -48,9 +48,21 @@ router.post('/runOrdination', function(req,res,next){
         dataR.project_id = data['project_id_ref'];
         dataR.specimen_name = data['specimen_name'];
         
-  
-        bd.query('INSERT INTO ordination values(DEFAULT,$1,$2,$3,$4,$5,$6) RETURNING ordination_id,ordination_name',[data['dataset_id_ref'],data['project_id_ref'],data['distance_id'],prefix+data['distance_name'],JSON.stringify(dataR.data),JSON.stringify(data['specimen_name'])], function(err, result){
+        bd.query('SELECT colors FROM dataset_json where dataset_id = $1',[dataR.dataset_id],function(err, result){
+          if(err){
+              res.status(200).json({ "error": "Error in request of specimen colors." });
+          }
+          else
+          {
+              dataR.colors = result.rows[0].colors;
+              console.log(dataR.colors);
+              //res.status(200).json(JSON.stringify(dataR));
+
+
+
+        bd.query('INSERT INTO ordination values(DEFAULT,$1,$2,$3,$4,$5,$6,$7) RETURNING ordination_id,ordination_name',[data['dataset_id_ref'],data['project_id_ref'],data['distance_id'],prefix+data['distance_name'],JSON.stringify(dataR.data),JSON.stringify(data['specimen_name']), JSON.stringify(dataR.colors)], function(err, result){
               if(err){
+                console.log(err);
                 res.status(200).json( { "error": "Error in the connection with database." });
               }
               else{
@@ -63,20 +75,14 @@ router.post('/runOrdination', function(req,res,next){
                       dataR.specimen_name.push('trace'+index);
                     }
                   }
-                  //it set the colors
-                  bd.query('SELECT colors FROM dataset_json where project_id = $1 and dataset_id = $2',[project_id, dataR.dataset_id],function(err, result){
-                    if(err){
-                        res.status(200).json({ "error": "Error in request of specimen colors." });
-                    }
-                    else
-                    {
-                        dataR.colors = result.rows[0].colors;
-                        res.status(200).json(JSON.stringify(dataR));
-                    }
-                  });
+                    res.status(200).json(JSON.stringify(dataR));
+
                 });
               }
             });
+
+          }
+        });
       }
     });
    });
