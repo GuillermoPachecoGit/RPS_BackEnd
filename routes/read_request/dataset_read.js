@@ -90,19 +90,62 @@ router.get('/get_datasetById', function(req,res,next){
         res.status(200).json({ "error": err});
       }
       else{
-        res.status(200).json(JSON.stringify(result.rows[0]));
+       res.status(200).json(JSON.stringify(result.rows[0]));
+      }
+  });
+});
+
+router.get('/get_dataset_pending', function(req,res,next){
+  var project_id = req.query.project_id;
+  bd.query('SELECT * FROM dataset_json WHERE project_id = $1 AND send = 1',[project_id],function(err, result){
+    if(err){
+        console.log(err);
+        res.status(200).json({ "error": err});
+      }
+      else{
+        res.status(200).json(JSON.stringify(result.rows));
+      }
+  });
+});
+
+router.get('/get_distance_pending', function(req,res,next){
+  var project_id = req.query.project_id;
+  bd.query('SELECT * FROM distance WHERE project_id = $1 AND send = 1',[project_id],function(err, result){
+    if(err){
+        console.log(err);
+        res.status(200).json({ "error": err});
+      }
+      else{
+        res.status(200).json(JSON.stringify(result.rows));
+      }
+  });
+});
+
+router.get('/get_ordination_pending', function(req,res,next){
+  var project_id = req.query.project_id;
+  bd.query('SELECT * FROM ordination WHERE project_id = $1 AND send = 1',[project_id],function(err, result){
+    if(err){
+        console.log(err);
+        res.status(200).json({ "error": err});
+      }
+      else{
+        res.status(200).json(JSON.stringify(result.rows));
       }
   });
 });
   
 router.get('/get_distanceById', function(req,res,next){
   var distance_id = req.query.id;
+
+  
+
   bd.query('SELECT * FROM distance WHERE distance_id = $1',[distance_id],function(err, result){
     if(err){
         console.log(err);
         res.status(200).json({ "error": err});
       }
       else{
+
         res.status(200).json(JSON.stringify(result.rows[0]));
       }
   });

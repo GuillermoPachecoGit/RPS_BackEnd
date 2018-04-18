@@ -407,8 +407,8 @@ robgit <- function(X, consenso = FALSE) {
         X <- adjustment3D(X)
         adjustament = TRUE
     }
-    tol <- 1e-04
-    iterTotal <- 50
+    tol <- 1e-03
+    iterTotal <- 1
     Z <- X
     f = nrow(Z[, , 1])
     c = ncol(Z[, , 1])

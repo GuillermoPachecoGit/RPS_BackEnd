@@ -11,6 +11,7 @@ router.post('/runDistance', function(req,res,next){
     var dataset_id = req.body.dataset_id;
     console.log(req.body);
     var algorithm = req.body.algorithm_selected;
+    var user_id = req.body.user_id;
     var data;
     //obtengo dataset
     bd.query('SELECT * FROM dataset_json where project_id = $1 and dataset_id = $2',[project_id,dataset_id],function(err, result){
@@ -62,6 +63,48 @@ router.post('/runDistance', function(req,res,next){
                       dataR.specimen_name.push('trace'+index);
                     }
                   }
+
+
+
+                  bd.query('SELECT first_name,email_address FROM app_user WHERE user_id = $1',[user_id], function(err, result){
+                      
+                    if(err){
+                      console.log(err);
+                      res.status(200).json( { "error": "Error in the connection with database." });
+                    }
+
+                    console.log('voy a mandar el email');
+                    var email_text = 'The analisys: '+ dataR.distance_name +'  has finished. Please enter the page to view the results. \n';
+                    email_text += 'Best Regards.\nRPS Team';
+                    var email_to = result.rows[0].email_address;
+                  //send email
+                    var transporter = nodemailer.createTransport({
+                      service: 'gmail',
+                      auth: {
+                        user: 'rps.software.unicen@gmail.com',
+                        pass: 'rpssoftware'
+                      }
+                    });
+                    
+                    var mailOptions = {
+                      from: 'rps.software.unicen@gmail.com',
+                      to: email_to,
+                      subject: 'RPS Online -Finished analisys',
+                      text: email_text
+                    };
+                    
+                    transporter.sendMail(mailOptions, function(error, info){
+                      if (error) {
+                        console.log(error);
+                      } else {
+                        console.log('Email sent: ' + info.response);
+                      }
+                    });
+                  });
+
+
+                
+
                   res.status(200).json(JSON.stringify(dataR));
                 });              
               }
