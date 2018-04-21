@@ -5,6 +5,7 @@ var bd=require('../db_connect/db');
 var R = require("r-script")
 var parseJSON = require('../../private_modules/parseR/parseJSON');
 var parser = new parseJSON();
+var nodemailer = require('nodemailer');
 
 router.post('/runDistance', function(req,res,next){
     var project_id = req.body.project_id;
@@ -42,6 +43,7 @@ router.post('/runDistance', function(req,res,next){
         } 
         var dataR  = JSON.parse(out);
         dataR.specimen_name = data['specimen_name'];
+        dataR.name = req.body.distance_name;
         bd.query('INSERT INTO distance values(DEFAULT,$1,$2,$3,$4,$5,$6) RETURNING distance_id',[data['dataset_id'],data['project_id'],prefix+data['file_name'],JSON.stringify(dataR.data),JSON.stringify(dataR.specimen_name),data['dimention']], function(err, result){
               if(err){
                 res.status(200).json( { "error": "Error in the connection with database." });

@@ -88,7 +88,7 @@ router.post('/runAnalize', function(req,res,next){
                   }else{
                     dataParse.dataset_name = prefix+data['dataset_name']+'_'+result.rows[0].dataset_id;
                   }
-                  
+                  dataParse.name = tab_name;
                   dataParse.dataset_id = result.rows[0].dataset_id;
                   bd.query('UPDATE dataset_json SET dataset_name = $1 WHERE dataset_id = $2',[prefix+data['dataset_name']+'_'+result.rows[0].dataset_id,result.rows[0].dataset_id ], function(err, result){
 

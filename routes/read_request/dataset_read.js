@@ -90,13 +90,20 @@ router.get('/get_datasetById', function(req,res,next){
         res.status(200).json({ "error": err});
       }
       else{
-       res.status(200).json(JSON.stringify(result.rows[0]));
+
+        bd.query('UPDATE dataset_json SET send=0 WHERE dataset_id = $1',[dataset_id],function(err, res){
+          if(err){
+            console.log(err);
+            res.status(200).json({ "error": err});
+          }
+        });
+        res.status(200).json(JSON.stringify(result.rows[0]));
       }
   });
 });
 
 router.get('/get_dataset_pending', function(req,res,next){
-  var project_id = req.query.project_id;
+  var project_id = req.query.id;
   bd.query('SELECT * FROM dataset_json WHERE project_id = $1 AND send = 1',[project_id],function(err, result){
     if(err){
         console.log(err);
@@ -109,7 +116,7 @@ router.get('/get_dataset_pending', function(req,res,next){
 });
 
 router.get('/get_distance_pending', function(req,res,next){
-  var project_id = req.query.project_id;
+  var project_id = req.query.id;
   bd.query('SELECT * FROM distance WHERE project_id = $1 AND send = 1',[project_id],function(err, result){
     if(err){
         console.log(err);
@@ -122,7 +129,7 @@ router.get('/get_distance_pending', function(req,res,next){
 });
 
 router.get('/get_ordination_pending', function(req,res,next){
-  var project_id = req.query.project_id;
+  var project_id = req.query.id;
   bd.query('SELECT * FROM ordination WHERE project_id = $1 AND send = 1',[project_id],function(err, result){
     if(err){
         console.log(err);
@@ -146,6 +153,12 @@ router.get('/get_distanceById', function(req,res,next){
       }
       else{
 
+        bd.query('UPDATE distance SET send=0 WHERE distance_id = $1',[distance_id],function(err, res){
+          if(err){
+            console.log(err);
+            res.status(200).json({ "error": err});
+          }
+        });
         res.status(200).json(JSON.stringify(result.rows[0]));
       }
   });
@@ -180,7 +193,13 @@ router.get('/get_ordinationById', function(req,res,next){
         res.status(200).json({ "error": err});
       }
       else{
-        console.log(result.rows);
+
+        bd.query('UPDATE ordination SET send=0 WHERE ordination_id = $1',[ordination_id],function(err, res){
+          if(err){
+            console.log(err);
+            res.status(200).json({ "error": err});
+          }
+        });
         res.status(200).json(JSON.stringify(result.rows[0]));
       }
   });

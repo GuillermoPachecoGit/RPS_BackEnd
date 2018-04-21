@@ -5,6 +5,7 @@ var bd=require('../db_connect/db');
 var R = require("r-script")
 var parseJSON = require('../../private_modules/parseR/parseJSON');
 var parser = new parseJSON();
+var nodemailer = require('nodemailer');
 
 
 router.post('/runOrdination', function(req,res,next){
@@ -68,6 +69,7 @@ router.post('/runOrdination', function(req,res,next){
               }
               else{
                 dataR.ordination_name = prefix+result.rows[0].ordination_name+'_'+result.rows[0].ordination_id;
+                dataR.name = req.body.ordination_name;
                 dataR.ordination_id = result.rows[0].ordination_id;
                 bd.query('UPDATE ordination SET ordination_name = $1 WHERE ordination_id = $2',[prefix+data['distance_name']+'_'+result.rows[0].ordination_id,result.rows[0].ordination_id ], function(err, result){
                   if(JSON.stringify(dataR.specimen_name) === JSON.stringify({})){

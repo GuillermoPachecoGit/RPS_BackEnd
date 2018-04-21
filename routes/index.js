@@ -28,30 +28,37 @@ router.get('/', function (req, res) {
 
 
  router.post("/uploadFile", upload.array("uploads[]", 12), function(req, res) {
-    console.log('llegue al server');
     var ext = path.extname(req.files[0].originalname);
+       console.log('extension: '+ext);
        if(ext !== '.tps' && ext !== '.nts' && ext !== '.txt') {
             console.log("archivo invalido");
             res.status(200).json( { "error": "Extension file invalid." });
        }
        else{
+           console.log("desde el cliente: "+req.body.type_file);
                 switch (req.body.type_file) {
-                    case 1:
+                    case '1':
                         if(ext != '.tps'){
                             console.log("archivo invalido");
                             res.status(200).json( { "error": "Extension file not is correct." });
+                            res.end();
+                            return;
                         }  
                         break;
-                    case 2:
+                    case '2':
                         if(ext != '.nts'){
                             console.log("archivo invalido");
                             res.status(200).json( { "error": "Extension file not is correct." });
+                            res.end();
+                            return;
                         }
                         break;
-                    case 3:
+                    case '3':
                         if(ext != '.txt'){
                             console.log("archivo invalido");
                             res.status(200).json( { "error": "Extension file not is correct." });
+                            res.end();
+                            return;
                         }
                         break;
                 }

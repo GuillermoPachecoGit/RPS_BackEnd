@@ -25,7 +25,7 @@ router.post('/register_user', function(req,res,next){
          }
        }
        else{
-         res.status(200).json( { "result": "ok"});;
+         res.status(200).json( { "result": "ok"});
        }
      });
    });
