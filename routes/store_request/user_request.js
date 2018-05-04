@@ -10,7 +10,7 @@ router.post('/register_user', function(req,res,next){
     var country = req.body.country;
     var area = req.body.area;
     var institution = req.body.institution; 
-    bd.query('INSERT INTO app_user values(DEFAULT,$1, $2, $3, $4, $5, $6)',[pass,area, username, email,institution,country], function(err, result){
+    bd.query('INSERT INTO app_user values(DEFAULT,$1, $2, $3, $4, $5, $6)',[pass, username, email,institution,country,area], function(err, result){
        if(err){
          switch (err["code"]) {
            case "23514":

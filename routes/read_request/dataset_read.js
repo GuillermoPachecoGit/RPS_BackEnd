@@ -104,6 +104,7 @@ router.get('/get_datasetById', function(req,res,next){
 
 router.get('/get_dataset_pending', function(req,res,next){
   var project_id = req.query.id;
+  console.log('pedi las dataset pendientes');
   bd.query('SELECT * FROM dataset_json WHERE project_id = $1 AND send = 1',[project_id],function(err, result){
     if(err){
         console.log(err);
@@ -117,7 +118,8 @@ router.get('/get_dataset_pending', function(req,res,next){
 
 router.get('/get_distance_pending', function(req,res,next){
   var project_id = req.query.id;
-  bd.query('SELECT * FROM distance WHERE project_id = $1 AND send = 1',[project_id],function(err, result){
+  console.log('pedi las distances pendientes');
+  bd.query('SELECT * FROM distance WHERE project_id_ref = $1 AND send = 1',[project_id],function(err, result){
     if(err){
         console.log(err);
         res.status(200).json({ "error": err});
@@ -130,7 +132,8 @@ router.get('/get_distance_pending', function(req,res,next){
 
 router.get('/get_ordination_pending', function(req,res,next){
   var project_id = req.query.id;
-  bd.query('SELECT * FROM ordination WHERE project_id = $1 AND send = 1',[project_id],function(err, result){
+  console.log('pedi las ordinations pendientes');
+  bd.query('SELECT * FROM ordination WHERE project_id_ref = $1 AND send = 1',[project_id],function(err, result){
     if(err){
         console.log(err);
         res.status(200).json({ "error": err});
@@ -221,5 +224,51 @@ router.get('/get_user_by_id', function(req,res,next){
   });
 });
 
+
+//agrega un proyecto a la base de datos
+router.get('/getDescription',function (req,res,next) {
+  console.log('llegue a pedir los proyectos.');
+  var project_id = req.query.id;
+  bd.query('SELECT project_name,description FROM project WHERE project_id = $1;',[project_id], function(err, result){
+    if(err){
+      res.status(200).json( { "result": "Error in the connection with database." });
+    }
+    else{
+        console.log(result);
+        res.status(200).json( { "result": "ok" , "description": result.rows[0].description, "project_name": result.rows[0].project_name });
+      }
+  })
+});
+
+
+router.post('/update_project', function(req,res,next){
+  params = req.body;
+  console.log('update of user: '+params);
+  
+
+  bd.query('SELECT 1 FROM project WHERE user_id =$2 and project_name = $1;',[params.project_name,params.user_id], function(err, result){
+    if(err){
+      res.status(200).json( { "result": "Error in the connection with database." });
+    }
+    else{
+      console.log(result.rowCount);
+      if(result.rowCount == 0){
+        bd.query('UPDATE project SET description = $1,project_name = $2  WHERE project_id = $3',[params.description,params.project_name, params.project_id],function(err,result){
+          if(err){
+              res.status(200).json( { "result": "error" });
+          }else{
+             res.status(200).json( { "result": "ok" } );
+          }
+      });
+
+      }else
+      {
+        res.status(200).json( { "result": "Already exist another project with the same name. Please change the project name." });
+      }
+      
+    }
+  })
+  
+});
 
   module.exports = router;
