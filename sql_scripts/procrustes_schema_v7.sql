@@ -21,11 +21,11 @@ CREATE TABLE COUNTRY(
 
 CREATE TABLE APP_USER(
     user_id       serial            NOT NULL,
-    password         varchar(40)     NOT NULL,
-    area             varchar(20),
-    first_name       varchar(30)     NOT NULL,
+    password         varchar(50)     NOT NULL,
+    area             varchar(80),
+    first_name       varchar(80)     NOT NULL,
     email_address    email    NOT NULL,
-    institution      varchar(60),
+    institution      varchar(80),
     country_id       int8            NOT NULL,
     CONSTRAINT PK_APP_USER PRIMARY KEY (user_id),
     CONSTRAINT AK_APP_USER  UNIQUE (email_address)
@@ -54,7 +54,7 @@ CREATE TABLE PROJECT(
     project_id       serial           NOT NULL,
     description      text,
     creation_date    timestamp      NOT NULL,
-    project_name     varchar(20)    NOT NULL,
+    project_name     varchar(80)    NOT NULL,
     user_id       int8           NOT NULL,
     CONSTRAINT PK_PROJECT PRIMARY KEY (project_id)
 );
@@ -71,7 +71,7 @@ ALTER TABLE PROJECT ADD CONSTRAINT FK_PROJECT_APP_USER
 CREATE  TABLE dataset_json (
  dataset_id serial NOT NULL,
  project_id  int8  NOT NULL, --> MAS EFICIENCIA DE ACCESO.
- dataset_name   varchar(30)  NOT NULL,
+ dataset_name   varchar(80)  NOT NULL,
  file_name   varchar(256)  NOT NULL,
  numbers_of_specimen    int4  NOT NULL,
  numbers_of_landmark    int4  NOT NULL,
@@ -105,7 +105,7 @@ CREATE TABLE DISTANCE(
     distance_id serial NOT NULL,
     dataset_id_ref int8 NOT NULL,
     project_id_ref int8 NOT NULL,
-    distance_name varchar(70) NOT NULL,
+    distance_name varchar(80) NOT NULL,
     data json NOT NULL,
     specimen_name json NOT NULL,
     CONSTRAINT PK_DISTANCE PRIMARY KEY (distance_id,dataset_id_ref)
@@ -125,7 +125,7 @@ CREATE TABLE ORDINATION(
     dataset_id_ref int8 NOT NULL,
     project_id_ref int8 NOT NULL,
     distance_id_ref int8 NOT NULL,
-    ordination_name varchar(70) NOT NULL,
+    ordination_name varchar(80) NOT NULL,
     data json NOT NULL,
     specimen_name json NOT NULL,
     CONSTRAINT PK_ordination PRIMARY KEY (ordination_id,dataset_id_ref)
@@ -152,4 +152,4 @@ ALTER TABLE ordination add column colors json;
 
 --modifications
 ALTER TABLE APP_USER DROP COLUMN area;
-ALTER TABLE APP_USER ADD COLUMN area varchar(60);
+ALTER TABLE APP_USER ADD COLUMN area varchar(80);

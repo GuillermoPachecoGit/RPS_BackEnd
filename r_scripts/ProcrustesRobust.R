@@ -819,9 +819,6 @@ univMDSrobust <- function(D, k) {
                 } else {
                   X <- x1
                 }
-
-
-
             }
         }
 

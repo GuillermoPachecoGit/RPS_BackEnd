@@ -34,7 +34,7 @@ class ParseJSON {
             if(algorithm != 1 &&  (i_spec == (n_specimen-1)) && show_consensus){
                 data_R.specimen_name.push("Consensus");
             }else{
-                data_R.specimen_name.push("trace".concat(i_spec));
+                data_R.specimen_name.push("Object_".concat(i_spec));
             }
             
             
@@ -55,6 +55,10 @@ class ParseJSON {
         var n_specimen = dataset[0][0].length;
         
         data_R.specimens = [];
+        var addName = false;
+        if(data_R.specimen_name.length == 0){
+            addName = true;
+        }
 
         var specimen;
         for (let i_spec = 0; i_spec < n_specimen; i_spec++) {
@@ -71,7 +75,10 @@ class ParseJSON {
                 } 
             }
             var name = "specimen".concat(i_spec);
-            data_R.specimens.push({ [name] : specimen});          
+            data_R.specimens.push({ [name] : specimen});      
+            if(addName){
+                data_R.specimen_name.push("Object_".concat(i_spec));
+            }
         }
 
         delete data_R.data;
