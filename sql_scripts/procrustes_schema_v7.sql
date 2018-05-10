@@ -81,6 +81,7 @@ CREATE  TABLE dataset_json (
  specimen_name json NOT NULL,
  dataset_id_ref int8 NULL,
  project_id_ref  int8  NULL,
+ send int8 NOT NULL,
  CONSTRAINT pk_dataset_json PRIMARY KEY (dataset_id,project_id)
 );
 
@@ -108,6 +109,8 @@ CREATE TABLE DISTANCE(
     distance_name varchar(80) NOT NULL,
     data json NOT NULL,
     specimen_name json NOT NULL,
+    dimention int8 NOT NULL,
+    send int NOT NULL,
     CONSTRAINT PK_DISTANCE PRIMARY KEY (distance_id,dataset_id_ref)
 )
 ;
@@ -118,8 +121,6 @@ ALTER TABLE DISTANCE ADD CONSTRAINT FK_DISTANCE_DATASET
     ON DELETE CASCADE
 ;
 
-ALTER TABLE distance add column  dimention int8 ;
-
 CREATE TABLE ORDINATION(
     ordination_id serial NOT NULL,
     dataset_id_ref int8 NOT NULL,
@@ -128,6 +129,8 @@ CREATE TABLE ORDINATION(
     ordination_name varchar(80) NOT NULL,
     data json NOT NULL,
     specimen_name json NOT NULL,
+    colors json NOT NULL,
+    send int8 NOT NULL,
     CONSTRAINT PK_ordination PRIMARY KEY (ordination_id,dataset_id_ref)
 )
 ;
@@ -144,12 +147,3 @@ ALTER TABLE ORDINATION ADD CONSTRAINT FK_ORDINATION_DISTANCE
     ON DELETE CASCADE
 ;
 
-
-ALTER TABLE dataset_json ADD COLUMN send int8;
-ALTER TABLE distance ADD COLUMN send int8;
-ALTER TABLE ordination ADD COLUMN send int8;
-ALTER TABLE ordination add column colors json;
-
---modifications
-ALTER TABLE APP_USER DROP COLUMN area;
-ALTER TABLE APP_USER ADD COLUMN area varchar(80);

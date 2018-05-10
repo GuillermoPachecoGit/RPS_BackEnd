@@ -56,8 +56,10 @@ class ParseJSON {
         
         data_R.specimens = [];
         var addName = false;
-        if(data_R.specimen_name.length == 0){
+        console.log('specimen_name: '+JSON.stringify(data_R));
+        if(JSON.stringify(data_R.specimen_name) === JSON.stringify({})){
             addName = true;
+            data_R.specimen_name = [];
         }
 
         var specimen;
