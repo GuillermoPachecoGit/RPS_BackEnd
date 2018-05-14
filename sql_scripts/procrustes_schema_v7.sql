@@ -81,6 +81,7 @@ CREATE  TABLE dataset_json (
  specimen_name json NOT NULL,
  dataset_id_ref int8 NULL,
  project_id_ref  int8  NULL,
+ show_consensus int8 NOT NULL,
  send int8 NOT NULL,
  CONSTRAINT pk_dataset_json PRIMARY KEY (dataset_id,project_id)
 );

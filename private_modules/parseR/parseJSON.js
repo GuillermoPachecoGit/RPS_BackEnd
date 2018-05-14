@@ -10,7 +10,7 @@ class ParseJSON {
         var dim = dataset[0].length;
         var n_specimen = dataset[0][0].length;
         
-        data_R.specimens = [];
+        data_R.specimens = { data:[], excluded_land: [], excluded_spec: [], number_of_landmarks:0, number_of_specimen: 0 };
         data_R.specimen_name = [];
 
         var specimen;
@@ -28,7 +28,7 @@ class ParseJSON {
                 } 
             }
             var name = "specimen".concat(i_spec);
-            data_R.specimens.push({ [name] : specimen});
+            data_R.specimens.data.push({ [name] : specimen});
             
             
             if(algorithm != 1 &&  (i_spec == (n_specimen-1)) && show_consensus){
@@ -77,7 +77,7 @@ class ParseJSON {
                 } 
             }
             var name = "specimen".concat(i_spec);
-            data_R.specimens.push({ [name] : specimen});      
+            data_R.specimens.data.push({ [name] : specimen});      
             if(addName){
                 data_R.specimen_name.push("Object_".concat(i_spec));
             }
@@ -109,6 +109,29 @@ class ParseJSON {
         return JSON.stringify(result);
     }
 
+    generateArraySpecimensAnalize(data,excluded_spec, excluded_land){
+        var result = [];
+        for (let index = 0; index < data.length; index++) {
+            if(!excluded_spec.includes(index.toString())){
+                const element = data[index];
+                result.push(this.cleanLandmarks(element['specimen'+index],excluded_land));
+            }           
+        }
+        console.log('cantidad de specimen: '+result.length);
+        return JSON.stringify(result);
+    }
+
+    cleanLandmarks(data,excluded_land){
+        var result = [];
+        for (let index = 0; index < data.length; index++) {
+            if(!excluded_land.includes(index.toString())){
+                result.push(data[index]);
+            }  
+
+        }
+        console.log('cantidad de land: '+result.length);
+        return result;
+    }
 }
 
 module.exports = ParseJSON;

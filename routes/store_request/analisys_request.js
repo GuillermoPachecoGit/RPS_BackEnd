@@ -17,7 +17,10 @@ router.post('/runAnalize', function(req,res,next){
     var show_consensus = req.body.show_consensus_selected;
     var tab_name = req.body.dataset_name;
     var user_id = req.body.user_id;
-    
+
+    var excluded_landmark = req.body.excluided_landmark;
+    var excluded_specimen = req.body.excluided_specimen;
+
     console.log('Request');
     console.log(req.body);
 
@@ -30,35 +33,47 @@ router.post('/runAnalize', function(req,res,next){
         else{
           data = result.rows[0];
           //corro el algoritmo
+
+          var dim_spec = (data['numbers_of_specimen']-excluded_specimen.length);
+          var dim_land = (data['numbers_of_landmark']-excluded_landmark.length);
+          console.log('new dim: '+dim_land +'  '+ dim_spec);
           var out;
           var prefix = '';
           switch(algorithm){
             case 1:
               out = R("r_scripts/ProcrustesCM.R")
-              .data({"num_specimen" : data['numbers_of_specimen'],"num_landmark": data['numbers_of_landmark'] ,"dim": data['dimention'] , "data": parser.generateArraySpecimens(data['specimens']) })
+              .data({"num_specimen" : dim_spec,"num_landmark": dim_land,"dim": data['dimention'] , "data": parser.generateArraySpecimensAnalize(data['specimens'],excluded_specimen,excluded_landmark) })
               .callSync();
               prefix = !show_consensus ? 'GlsP_' : 'GlsP_Consensus_';
             break;
   
             case 2:
               out = R("r_scripts/ProcrustesRobust.R")
-              .data({"num_specimen" : data['numbers_of_specimen'],"num_landmark": data['numbers_of_landmark'] ,"dim": data['dimention'] , "data": parser.generateArraySpecimens(data['specimens']), "show_consensus" : show_consensus  })
+              .data({"num_specimen" : dim_spec,"num_landmark": dim_land ,"dim": data['dimention'] , "data": parser.generateArraySpecimensAnalize(data['specimens'],excluded_specimen,excluded_landmark), "show_consensus" : show_consensus  })
               .callSync();
               prefix =  !show_consensus ? 'GrP_' : 'GrP_Consensus_' ;
             break;
           }
   
+
+          
           console.log('termine el analisis');
           dataParse = parser.parseDataR(out,show_consensus,algorithm);
           dataParse.colors = data['colors'];
+          
           //special case of CM algorithm
           if(algorithm == 1 && show_consensus){
             var name = 'specimen'+(dataParse.specimens.length);
             var consenso = JSON.parse(out);
-            dataParse.specimens.push( { [name] : consenso['consensus'] } );
+            dataParse.specimens.data.push( { [name] : consenso['consensus'] } );
             dataParse.numbers_of_specimen = dataParse.numbers_of_specimen + 1;
             dataParse.colors.push('#ea0b0b');//aparecera en ROJO
           }
+
+          dataParse.specimens.excluded_land = excluded_landmark;
+          dataParse.specimens.excluded_spec = excluded_specimen;
+          dataParse.specimens.numbers_of_specimens  = data['numbers_of_specimen'];
+          dataParse.specimens.numbers_of_landmarks = data['numbers_of_landmark'];
           dataParse.project_id = data['project_id'];    
 
           //reutilizo los nombres 
@@ -70,7 +85,15 @@ router.post('/runAnalize', function(req,res,next){
             dataParse.specimen_name.push("Consensus");
           }
 
+          var cleanList = [];
+          for (let index = 0; index < dataParse.specimen_name.length; index++) {
+            const element = dataParse.specimen_name[index];
+            if(!excluded_specimen.includes(index.toString())){
+                cleanList.push(element);
+            }
+          }
 
+          dataParse.specimen_name = cleanList;
           dataParse.dataset_id_ref =  data['dataset_id'];
           dataParse.project_id_ref = data['project_id'];
 
