@@ -53,6 +53,7 @@ router.get('/', function (req, res) {
                             return;
                         }
                         break;
+                    case '4':
                     case '3':
                         if(ext != '.txt'){
                             console.log("archivo invalido");
@@ -61,6 +62,7 @@ router.get('/', function (req, res) {
                             return;
                         }
                         break;
+                    
                 }
               var stream = fs.createReadStream('./temp/'+req.files[0].filename).on('error',function(e){console.log(e);}).pipe(fs.createWriteStream('./public/datasets/'+req.files[0].originalname)).on('error',function(e){console.log(e);});
               stream.on('finish', function () {
@@ -77,6 +79,13 @@ router.get('/', function (req, res) {
 //Aca leo el archivo en R
 var myEventHandler = function (nameFile,params,res) {
     console.log(params);
+
+    bd.query('SELECT 1 FROM dataset_json WHERE  project_id = $1 AND dataset_name = $2 ;',[params.project_id,params.dataset_name], function(err, result){
+        if(err){
+          res.status(200).json( { "error": "Error in the connection with database." });
+        }
+        else{
+            if(result.rowCount == 0){
     var path = "./public/datasets/".concat(nameFile);
     var out = R("r_scripts/loadDataset.R")
     .data({file : path, "type_file": params.type_file})
@@ -86,18 +95,30 @@ var myEventHandler = function (nameFile,params,res) {
 
    dataParse.project_id = params.project_id;
    dataParse.dataset_name = params.dataset_name;
-     bd.query('INSERT INTO dataset_json values(DEFAULT,$1,$2,$3,$4,$5,$6,$7,$8,$9,NULL,NULL,0,0) RETURNING dataset_id',[params.project_id,params.dataset_name,nameFile,dataParse.numbers_of_specimen,dataParse.numbers_of_landmark,dataParse.dimention,JSON.stringify(dataParse.specimens),JSON.stringify(dataParse.colors),JSON.stringify(dataParse.specimen_name)], function(err, result){
-        console.log(result);
-         if(err){
-           console.log(err);
-           res.status(200).json( { "error": "Error in the connection with database." });
-         }
-         else{
-           dataParse.dataset_id = result.rows[0].dataset_id;
-           res.status(200).json(JSON.stringify(dataParse));
-         }
+   dataParse.specimens.numbers_of_landmarks = dataParse.numbers_of_landmark;
+   dataParse.specimens.numbers_of_specimens = dataParse.numbers_of_specimen;
 
-       });
+   dataParse.specimens.root_number_landmarks = dataParse.numbers_of_landmark;
+   dataParse.specimens.root_number_specimens = dataParse.numbers_of_specimen;
+   
+            bd.query('INSERT INTO dataset_json values(DEFAULT,$1,$2,$3,$4,$5,$6,$7,$8,$9,NULL,NULL,0,0) RETURNING dataset_id',[params.project_id,params.dataset_name,nameFile,dataParse.numbers_of_specimen,dataParse.numbers_of_landmark,dataParse.dimention,JSON.stringify(dataParse.specimens),JSON.stringify(dataParse.colors),JSON.stringify(dataParse.specimen_name)], function(err, result){
+                console.log(result);
+                if(err){
+                console.log(err);
+                res.status(200).json( { "error": "Error in the connection with database." });
+                }
+                else{
+                dataParse.dataset_id = result.rows[0].dataset_id;
+                res.status(200).json(JSON.stringify(dataParse));
+                }
+
+            });
+        }else
+        {
+            res.status(200).json( { "error": "Already exist another dataset with the same name. Please change the dataset name." });
+        }
+        
+    }});
 }
 
 //Assign the event handler to an event:

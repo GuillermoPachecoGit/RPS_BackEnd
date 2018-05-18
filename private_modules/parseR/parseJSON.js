@@ -10,7 +10,7 @@ class ParseJSON {
         var dim = dataset[0].length;
         var n_specimen = dataset[0][0].length;
         
-        data_R.specimens = { data:[], excluded_land: [], excluded_spec: [], number_of_landmarks:0, number_of_specimen: 0 };
+        data_R.specimens = { data:[], excluded_land: [], excluded_spec: [], numbers_of_landmarks:0, numbers_of_specimens: 0, root_number_landmarks: 0, root_number_specimens: 0 };
         data_R.specimen_name = [];
 
         var specimen;
@@ -54,7 +54,8 @@ class ParseJSON {
         var dim = dataset[0].length;
         var n_specimen = dataset[0][0].length;
         
-        data_R.specimens = [];
+        data_R.specimens = { data:[], excluded_land: [], excluded_spec: [], numbers_of_landmarks:0, numbers_of_specimens: 0 , root_number_landmarks: 0 , root_number_specimens: 0 };
+   
         var addName = false;
         console.log('specimen_name: '+JSON.stringify(data_R));
         if(JSON.stringify(data_R.specimen_name) === JSON.stringify({})){
@@ -111,9 +112,10 @@ class ParseJSON {
 
     generateArraySpecimensAnalize(data,excluded_spec, excluded_land){
         var result = [];
-        for (let index = 0; index < data.length; index++) {
+        console.log("DESDE LA BASE: "+ JSON.stringify(data));
+        for (let index = 0; index < data['data'].length; index++) {
             if(!excluded_spec.includes(index.toString())){
-                const element = data[index];
+                const element = data['data'][index];
                 result.push(this.cleanLandmarks(element['specimen'+index],excluded_land));
             }           
         }

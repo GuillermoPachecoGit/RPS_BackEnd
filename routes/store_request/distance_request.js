@@ -28,14 +28,14 @@ router.post('/runDistance', function(req,res,next){
   
           case 2:
             out = R("r_scripts/RobustDistance.R")
-            .data({"num_specimen" : data['numbers_of_specimen'],"num_landmark": data['numbers_of_landmark'] ,"dim": data['dimention'] , "data": parser.generateArraySpecimens(data['specimens']) })
+            .data({"num_specimen" : data['numbers_of_specimen'],"num_landmark": data['numbers_of_landmark'] ,"dim": data['dimention'] , "data": parser.generateArraySpecimens(data['specimens']['data']) })
             .callSync();
             prefix = 'rD_'
           break;
   
           case 1:
             out = R("r_scripts/CMDistance.R")
-            .data({"num_specimen" : data['numbers_of_specimen'],"num_landmark": data['numbers_of_landmark'] ,"dim": data['dimention'] , "data": parser.generateArraySpecimens(data['specimens']) })
+            .data({"num_specimen" : data['numbers_of_specimen'],"num_landmark": data['numbers_of_landmark'] ,"dim": data['dimention'] , "data": parser.generateArraySpecimens(data['specimens']['data']) })
             .callSync();
             prefix = 'lsD_'
           break;

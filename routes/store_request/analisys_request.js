@@ -70,8 +70,12 @@ router.post('/runAnalize', function(req,res,next){
             dataParse.colors.push('#ea0b0b');//aparecera en ROJO
           }
 
-          dataParse.specimens.excluded_land = excluded_landmark;
-          dataParse.specimens.excluded_spec = excluded_specimen;
+          dataParse.specimens.excluded_land = excluded_landmark.concat(data['specimens']['excluded_land']);
+          dataParse.specimens.excluded_spec = excluded_specimen.concat(data['specimens']['excluded_spec']);
+
+          dataParse.specimens.root_number_landmarks = data['specimens']['root_number_landmarks'];
+          dataParse.specimens.root_number_specimens = data['specimens']['root_number_specimens'];
+
           dataParse.specimens.numbers_of_specimens  = data['numbers_of_specimen'];
           dataParse.specimens.numbers_of_landmarks = data['numbers_of_landmark'];
           dataParse.project_id = data['project_id'];    
