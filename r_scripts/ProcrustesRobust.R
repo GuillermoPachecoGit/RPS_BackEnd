@@ -400,15 +400,15 @@ relativeDistance <- function(X, specm1, specm2, t) {
     return(P)
 }
 
-robgit <- function(X, consenso = FALSE) {
+robgit <- function(X, consenso = FALSE, tol = 1e-03, iterations = 1 ) {
 
     adjustament = FALSE
     if (ncol(X[, , 1]) == 2) {
         X <- adjustment3D(X)
         adjustament = TRUE
     }
-    tol <- 1e-03
-    iterTotal <- 1
+    tolerance <- tol
+    iterTotal <- iterations
     Z <- X
     f = nrow(Z[, , 1])
     c = ncol(Z[, , 1])
@@ -887,7 +887,20 @@ needs(geomorph)
 needs(MASS)
 needs(jsonlite)
 attach(input[[1]])
-dataset <- robgit(parseJSON(num_specimen,num_landmark,dim, jsonlite::fromJSON(data)), consenso = show_consensus)
+if(iter == ""){
+    if(tolerance == ""){
+        dataset <- robgit(parseJSON(num_specimen,num_landmark,dim, jsonlite::fromJSON(data)), consenso = show_consensus)
+    }else{
+        dataset <- robgit(parseJSON(num_specimen,num_landmark,dim, jsonlite::fromJSON(data)), consenso = show_consensus,tol = tolerance)
+    }
+}else{
+    if(tolerance == ""){
+        dataset <- robgit(parseJSON(num_specimen,num_landmark,dim, jsonlite::fromJSON(data)), consenso = show_consensus,iterations = iter)
+    }else{
+        dataset <- robgit(parseJSON(num_specimen,num_landmark,dim, jsonlite::fromJSON(data)), consenso = show_consensus,tol = tolerance,iterations = iter)
+    }
+}
+
 
 n_land = nrow(dataset[,,1])
 n_spec = ncol(dataset[,1,])

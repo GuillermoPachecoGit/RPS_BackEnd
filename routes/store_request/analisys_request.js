@@ -17,6 +17,7 @@ router.post('/runAnalize', function(req,res,next){
     var show_consensus = req.body.show_consensus_selected;
     var tab_name = req.body.dataset_name;
     var user_id = req.body.user_id;
+    
 
     var excluded_landmark = req.body.excluided_landmark;
     var excluded_specimen = req.body.excluided_specimen;
@@ -48,8 +49,12 @@ router.post('/runAnalize', function(req,res,next){
             break;
   
             case 2:
+              var iterations = req.body.iterations;
+              var tolerance = req.body.tolerance;
+              
+
               out = R("r_scripts/ProcrustesRobust.R")
-              .data({"num_specimen" : dim_spec,"num_landmark": dim_land ,"dim": data['dimention'] , "data": parser.generateArraySpecimensAnalize(data['specimens'],excluded_specimen,excluded_landmark), "show_consensus" : show_consensus  })
+              .data({"num_specimen" : dim_spec,"num_landmark": dim_land ,"dim": data['dimention'] , "data": parser.generateArraySpecimensAnalize(data['specimens'],excluded_specimen,excluded_landmark), "show_consensus" : show_consensus ,"tolerance": tolerance, "iter": iterations })
               .callSync();
               prefix =  !show_consensus ? 'GrP_' : 'GrP_Consensus_' ;
             break;
