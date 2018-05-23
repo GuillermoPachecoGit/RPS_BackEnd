@@ -57,7 +57,7 @@ class ParseJSON {
         data_R.specimens = { data:[], excluded_land: [], excluded_spec: [], numbers_of_landmarks:0, numbers_of_specimens: 0 , root_number_landmarks: 0 , root_number_specimens: 0 };
    
         var addName = false;
-        console.log('specimen_name: '+JSON.stringify(data_R));
+        
         if(JSON.stringify(data_R.specimen_name) === JSON.stringify({})){
             addName = true;
             data_R.specimen_name = [];
@@ -85,6 +85,7 @@ class ParseJSON {
         }
 
         delete data_R.data;
+        console.log('specimen_name: '+JSON.stringify(data_R.specimens));
         data_R.colors = this.generateArrayColors(n_specimen);
         return data_R;
     }
