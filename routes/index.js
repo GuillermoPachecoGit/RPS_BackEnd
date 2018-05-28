@@ -21,9 +21,9 @@ var R = require("r-script")
 var parseJSON = require('../private_modules/parseR/parseJSON');
 var parser = new parseJSON();
 
-router.get('/', function (req, res) {
+/*router.get('/', function (req, res) {
     res.send('Welcome to RPS API');
- })
+ })*/
 
 
 

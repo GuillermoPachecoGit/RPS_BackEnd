@@ -18,8 +18,8 @@ var router = express.Router();              // get an instance of the express Ro
 app.use('/api', router);
 
 //Path --> "/api/" 
-var index = require('./routes/index');
-app.use('/', index);
+/*var index = require('./routes/index');
+app.use('/', index);*/
 
 /*********READ*********/
 
@@ -71,9 +71,9 @@ var removeManagement = require('./routes/store_request/remove_management');
 app.use('/db_request_remove_w', removeManagement);
 
 //Test upload file static
-app.use(express.static('public'));
+app.use(express.static('public/dist'));
 
-app.get('/index.html', function (req, res) {
+app.get('/', function (req, res) {
    res.sendFile( __dirname + "/" + "index.html" );
 })
 
