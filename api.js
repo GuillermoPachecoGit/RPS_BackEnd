@@ -18,8 +18,8 @@ var router = express.Router();              // get an instance of the express Ro
 app.use('/api', router);
 
 //Path --> "/api/" 
-/*var index = require('./routes/index');
-app.use('/', index);*/
+var index = require('./routes/index');
+app.use('/', index);
 
 /*********READ*********/
 
@@ -71,11 +71,27 @@ var removeManagement = require('./routes/store_request/remove_management');
 app.use('/db_request_remove_w', removeManagement);
 
 //Test upload file static
-app.use(express.static('public/dist'));
+app.use(express.static('public/dist/'));
 
-app.get('/', function (req, res) {
-   res.sendFile( __dirname + "/" + "index.html" );
+
+
+
+app.get('/main/home',function (req,res){
+    res.redirect('/');
 })
+
+app.get('/main/signin',function (req,res){
+    res.redirect('/');
+})
+
+app.get('/main/signup',function (req,res){
+    res.redirect('/');
+})
+
+app.get('/dashboard/*',function (req,res){
+    res.redirect('/main/signin');
+})
+
 
 var server = app.listen(80, function () {
    var host = server.address().address

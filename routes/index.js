@@ -24,6 +24,10 @@ var parser = new parseJSON();
 /*router.get('/', function (req, res) {
     res.send('Welcome to RPS API');
  })*/
+ //ANGULAR APP
+app.get('/', function (req, res) {
+    res.sendFile( "index.html" );
+ })
 
 
 

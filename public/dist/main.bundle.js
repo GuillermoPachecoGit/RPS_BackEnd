@@ -410,7 +410,7 @@ var SharedDatasetService = (function () {
         this.distanceResult.next(JSON.parse(distance));
     };
     SharedDatasetService.prototype.getServerIP = function () {
-        return "rps.pladema.net";
+        return "localhost:80";
     };
     SharedDatasetService.prototype.getDistance = function () {
         return this.distanceResult.asObservable();

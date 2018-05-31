@@ -15,7 +15,7 @@ router.post('/runOrdination', function(req,res,next){
     var data;
     var user_id = req.body.user_id;
 
-    console.log("llegue a correr la proyeccion");
+   
     //obtengo dataset
     bd.query('SELECT * FROM distance where project_id_ref = $1 and distance_id = $2',[project_id,distance_id],function(err, result){
       if(err){
@@ -28,7 +28,8 @@ router.post('/runOrdination', function(req,res,next){
         var prefix = '';
         var dimention = 2;
   
-  
+        console.log('entrada: '+JSON.stringify(data['data']));
+
         switch(algorithm){
           case 1:
             out = R("r_scripts/univMDSeucl.R")
