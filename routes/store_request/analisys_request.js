@@ -5,8 +5,9 @@ var bd=require('../db_connect/db');
 var R = require("r-script")
 var parseJSON = require('../../private_modules/parseR/parseJSON');
 var parser = new parseJSON();
-var nodemailer = require('nodemailer');
 
+var emailManager = require('../../private_modules/EmailSender');
+var senderEmail = new emailManager();
 
 
 
@@ -135,36 +136,8 @@ router.post('/runAnalize', function(req,res,next){
                       var email_text = 'The analisys: '+ dataParse.dataset_name +'  has finished. Please enter the page to view the results. \n';
                       email_text += 'Best Regards.\nRPS Team';
                       var email_to = result.rows[0].email_address;
-                    //send email
-                      var transporter = nodemailer.createTransport({
-                        service: 'gmail',
-                        auth: {
-                          user: 'rps.software.unicen@gmail.com',
-                          pass: 'rpssoftware'
-                        }
-                      });
-                      
-                      var mailOptions = {
-                        from: 'rps.software.unicen@gmail.com',
-                        to: email_to,
-                        subject: 'RPS Online -Finished analisys',
-                        text: email_text
-                      };
-                      
-                      transporter.sendMail(mailOptions, function(error, info){
-                        if (error) {
-                          console.log(error);
-                        } else {
-                          console.log('Email sent: ' + info.response);
-                        }
-                      });
+                      senderEmail.sendEmail(senderEmail.generateMailOptions(email_to,senderEmail.subject().Analysis,email_text));
                     });
-
-
-                    
-
-
-                    //I sent to response at app
                     res.status(200).json(JSON.stringify(dataParse));
                     
                   });
