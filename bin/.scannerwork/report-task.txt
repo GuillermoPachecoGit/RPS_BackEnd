@@ -1,0 +1,7 @@
+organization=guillermitus12-github
+projectKey=guillermitus12
+serverUrl=https://sonarcloud.io
+serverVersion=7.2.0.12953
+dashboardUrl=https://sonarcloud.io/dashboard/index/guillermitus12
+ceTaskId=AWP8Mo3W6E79xp0Px_g6
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AWP8Mo3W6E79xp0Px_g6

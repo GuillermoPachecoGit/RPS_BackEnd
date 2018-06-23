@@ -6,6 +6,9 @@ var R = require("r-script")
 var parseJSON = require('../../private_modules/parseR/parseJSON');
 var parser = new parseJSON();
 
+var pdfBuilder = require('../../private_modules/PDFBuilder');
+var builder = new pdfBuilder();
+
 var emailManager = require('../../private_modules/EmailSender');
 var senderEmail = new emailManager();
 
@@ -19,10 +22,14 @@ router.post('/runAnalize', function(req,res,next){
     var tab_name = req.body.dataset_name;
     var user_id = req.body.user_id;
     
+    var params = {};
 
     var excluded_landmark = req.body.excluided_landmark;
     var excluded_specimen = req.body.excluided_specimen;
 
+
+    params.excluded_land = excluded_landmark;
+    params.excluded_spec = excluded_specimen;
     console.log('Request');
     console.log(req.body);
 
@@ -35,18 +42,25 @@ router.post('/runAnalize', function(req,res,next){
         else{
           data = result.rows[0];
           //corro el algoritmo
-
+          params.original_name = data['dataset_name']
+                  
           var dim_spec = (data['numbers_of_specimen']-excluded_specimen.length);
           var dim_land = (data['numbers_of_landmark']-excluded_landmark.length);
+
+          params.numbers_of_specimen = dim_spec;
+          params.numbers_of_landmark = dim_land;
           console.log('new dim: '+dim_land +'  '+ dim_spec);
           var out;
           var prefix = '';
+          params.dimention = data['dimention'];
+        
           switch(algorithm){
-            case 1:
+            case 1:data['dimention']
               out = R("r_scripts/ProcrustesCM.R")
               .data({"num_specimen" : dim_spec,"num_landmark": dim_land,"dim": data['dimention'] , "data": parser.generateArraySpecimensAnalize(data['specimens'],excluded_specimen,excluded_landmark) })
               .callSync();
               prefix = !show_consensus ? 'GlsP_' : 'GlsP_Consensus_';
+              params.algorithm = 'Procrustes Superposition by Minimum Squares'
             break;
   
             case 2:
@@ -58,6 +72,7 @@ router.post('/runAnalize', function(req,res,next){
               .data({"num_specimen" : dim_spec,"num_landmark": dim_land ,"dim": data['dimention'] , "data": parser.generateArraySpecimensAnalize(data['specimens'],excluded_specimen,excluded_landmark), "show_consensus" : show_consensus ,"tolerance": tolerance, "iter": iterations })
               .callSync();
               prefix =  !show_consensus ? 'GrP_' : 'GrP_Consensus_' ;
+              params.algorithm = 'Procrustes Superposition Resistant'
             break;
           }
   
@@ -81,6 +96,8 @@ router.post('/runAnalize', function(req,res,next){
 
           dataParse.specimens.root_number_landmarks = data['specimens']['root_number_landmarks'];
           dataParse.specimens.root_number_specimens = data['specimens']['root_number_specimens'];
+
+          params.data = dataParse.specimens.data;
 
           dataParse.specimens.numbers_of_specimens  = data['numbers_of_specimen'];
           dataParse.specimens.numbers_of_landmarks = data['numbers_of_landmark'];
@@ -106,9 +123,10 @@ router.post('/runAnalize', function(req,res,next){
           dataParse.specimen_name = cleanList;
           dataParse.dataset_id_ref =  data['dataset_id'];
           dataParse.project_id_ref = data['project_id'];
-
+          
+          params.specimen_name = dataParse.specimen_name;
           show_consensus = show_consensus ? 1 : 0;
-          bd.query('INSERT INTO dataset_json values(DEFAULT,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,1) RETURNING dataset_id',[data['project_id'],data['dataset_name'],prefix+data['file_name'],dataParse.numbers_of_specimen,dataParse.numbers_of_landmark,dataParse.dimention,JSON.stringify(dataParse.specimens),JSON.stringify(dataParse.colors),JSON.stringify(dataParse.specimen_name),data['dataset_id'],data['project_id'],show_consensus], function(err, result){
+          bd.query('INSERT INTO dataset_json values(DEFAULT,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,1,NULL) RETURNING dataset_id',[data['project_id'],data['dataset_name'],prefix+data['file_name'],dataParse.numbers_of_specimen,dataParse.numbers_of_landmark,dataParse.dimention,JSON.stringify(dataParse.specimens),JSON.stringify(dataParse.colors),JSON.stringify(dataParse.specimen_name),data['dataset_id'],data['project_id'],show_consensus], function(err, result){
                 if(err){
                   console.log(err);
                   res.status(200).json( { "error": "Error in the connection with database." });
@@ -123,9 +141,12 @@ router.post('/runAnalize', function(req,res,next){
                   }
                   dataParse.name = tab_name;
                   dataParse.dataset_id = result.rows[0].dataset_id;
-                  bd.query('UPDATE dataset_json SET dataset_name = $1 WHERE dataset_id = $2',[prefix+data['dataset_name']+'_'+result.rows[0].dataset_id,result.rows[0].dataset_id ], function(err, result){
+                  params.name = tab_name;
+                  //PDF GENERATION
+                  dataParse.pdf = builder.generatePDF_Dataset(params);
+                  bd.query('UPDATE dataset_json SET dataset_name = $1,pdf = $3 WHERE dataset_id = $2',[prefix+data['dataset_name']+'_'+result.rows[0].dataset_id,result.rows[0].dataset_id, JSON.stringify(dataParse.pdf) ], function(err, result){
 
-                    bd.query('SELECT first_name,email_address FROM app_user WHERE user_id = $1',[user_id], function(err, result){
+                    bd.query('SELECT first_name,email_address FROM app_user WHERE user_id = $1',[user_id], function(err, result){ 
                       
                       if(err){
                         console.log(err);
@@ -133,11 +154,16 @@ router.post('/runAnalize', function(req,res,next){
                       }
 
                       console.log('voy a mandar el email');
+                      //EMAIL SECTION
                       var email_text = 'The analisys: '+ dataParse.dataset_name +'  has finished. Please enter the page to view the results. \n';
                       email_text += 'Best Regards.\nRPS Team';
                       var email_to = result.rows[0].email_address;
                       senderEmail.sendEmail(senderEmail.generateMailOptions(email_to,senderEmail.subject().Analysis,email_text));
+
+                      
                     });
+                    
+
                     res.status(200).json(JSON.stringify(dataParse));
                     
                   });

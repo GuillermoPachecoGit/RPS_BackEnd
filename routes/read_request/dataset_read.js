@@ -82,6 +82,46 @@ router.get('/get_distances_by_project', function(req,res,next){
 );
 
 
+
+router.get('/get_analisys_PDF', function(req,res,next){
+  var dataset_id = req.query.id;
+  bd.query('SELECT dataset_name,pdf FROM dataset_json WHERE dataset_id = $1',[dataset_id],function(err, result){
+    if(err){
+        console.log(err);
+        res.status(200).json({ "error": err});
+      }
+      else{
+        res.status(200).json(JSON.stringify(result.rows[0]));
+      }
+  });
+});
+
+router.get('/get_distance_PDF', function(req,res,next){
+  var dataset_id = req.query.id;
+  bd.query('SELECT distance_name,pdf FROM distance WHERE distance_id = $1',[dataset_id],function(err, result){
+    if(err){
+        console.log(err);
+        res.status(200).json({ "error": err});
+      }
+      else{
+        res.status(200).json(JSON.stringify(result.rows[0]));
+      }
+  });
+});
+
+router.get('/get_ordination_PDF', function(req,res,next){
+  var ordination_id = req.query.id;
+  bd.query('SELECT ordination_name,pdf FROM ordination WHERE ordination_id = $1',[ordination_id],function(err, result){
+    if(err){
+        console.log(err);
+        res.status(200).json({ "error": err});
+      }
+      else{
+        res.status(200).json(JSON.stringify(result.rows[0]));
+      }
+  });
+});
+
 router.get('/get_datasetById', function(req,res,next){
   var dataset_id = req.query.id;
   bd.query('SELECT * FROM dataset_json WHERE dataset_id = $1',[dataset_id],function(err, result){
