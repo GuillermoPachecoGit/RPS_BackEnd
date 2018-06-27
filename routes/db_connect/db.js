@@ -4,7 +4,7 @@ var pg = require('pg');
 var config = {
   user: 'postgres', //env var: PGUSER 
   database: 'postgres', //env var: PGDATABASE 
-  password: '1234', //env var: PGPASSWORD --zaqxsw123 
+  password: 'zaqxsw123', //env var: PGPASSWORD --zaqxsw123 
   host: 'localhost', // Server hosting the postgres database 
   port: 5432, //env var: PGPORT 
 };
