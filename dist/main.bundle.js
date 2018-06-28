@@ -409,7 +409,7 @@ var SharedDatasetService = (function () {
         this.distanceResult.next(JSON.parse(distance));
     };
     SharedDatasetService.prototype.getServerIP = function () {
-        return "localhost:80";
+        return "10.1.6.31:80";
     };
     SharedDatasetService.prototype.getDistance = function () {
         return this.distanceResult.asObservable();
