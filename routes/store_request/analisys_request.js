@@ -12,6 +12,8 @@ var builder = new pdfBuilder();
 var emailManager = require('../../private_modules/EmailSender');
 var senderEmail = new emailManager();
 
+var plotly = require('../../private_modules/PlotlyGenerator');
+var plotlyGenerator = new plotly();
 
 
 router.post('/runAnalize', function(req,res,next){
@@ -60,7 +62,7 @@ router.post('/runAnalize', function(req,res,next){
               .data({"num_specimen" : dim_spec,"num_landmark": dim_land,"dim": data['dimention'] , "data": parser.generateArraySpecimensAnalize(data['specimens'],excluded_specimen,excluded_landmark) })
               .callSync();
               prefix = !show_consensus ? 'GlsP_' : 'GlsP_Consensus_';
-              params.algorithm = 'Procrustes Superposition by Minimum Squares'
+              params.algorithm = 'Least-Squares Procrustes Superimposition'
             break;
   
             case 2:
@@ -72,7 +74,7 @@ router.post('/runAnalize', function(req,res,next){
               .data({"num_specimen" : dim_spec,"num_landmark": dim_land ,"dim": data['dimention'] , "data": parser.generateArraySpecimensAnalize(data['specimens'],excluded_specimen,excluded_landmark), "show_consensus" : show_consensus ,"tolerance": tolerance, "iter": iterations })
               .callSync();
               prefix =  !show_consensus ? 'GrP_' : 'GrP_Consensus_' ;
-              params.algorithm = 'Procrustes Superposition Resistant'
+              params.algorithm = 'Resistant Procrustes Superimposition'
             break;
           }
   
@@ -124,6 +126,7 @@ router.post('/runAnalize', function(req,res,next){
           dataParse.dataset_id_ref =  data['dataset_id'];
           dataParse.project_id_ref = data['project_id'];
           
+          
           params.specimen_name = dataParse.specimen_name;
           show_consensus = show_consensus ? 1 : 0;
           bd.query('INSERT INTO dataset_json values(DEFAULT,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,1,NULL) RETURNING dataset_id',[data['project_id'],data['dataset_name'],prefix+data['file_name'],dataParse.numbers_of_specimen,dataParse.numbers_of_landmark,dataParse.dimention,JSON.stringify(dataParse.specimens),JSON.stringify(dataParse.colors),JSON.stringify(dataParse.specimen_name),data['dataset_id'],data['project_id'],show_consensus], function(err, result){
@@ -155,13 +158,21 @@ router.post('/runAnalize', function(req,res,next){
 
                       console.log('voy a mandar el email');
                       //EMAIL SECTION
-                      var email_text = 'The analisys: '+ dataParse.dataset_name +'  has finished. Please enter the page to view the results. \n';
-                      email_text += 'Best Regards.\nRPS Team';
+                      var email_text = 'The analysis: '+ dataParse.dataset_name +'  has finished ...please check. \n';
+                      email_text += 'Sincerely, \nRPS Team';
                       var email_to = result.rows[0].email_address;
                       senderEmail.sendEmail(senderEmail.generateMailOptions(email_to,senderEmail.subject().Analysis,email_text));
 
                       
                     });
+                    
+                    if(dataParse.dimention == 3){
+                      dataParse.data_plotly =  plotlyGenerator.generateGraphicsPlotly3D(dataParse);
+                      dataParse.layout = plotlyGenerator.getLayoutPlotly3D();
+                    }
+                    dataParse.data_plotly =  plotlyGenerator.generateGraphicsPlotly2D(dataParse);
+                    dataParse.layout = plotlyGenerator.getLayoutPlotly2D(algorithm);
+                    
                     
 
                     res.status(200).json(JSON.stringify(dataParse));

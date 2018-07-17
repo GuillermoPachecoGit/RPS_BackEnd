@@ -6,6 +6,8 @@ var eventEmitter = new events.EventEmitter();
 
 var bd=require('./db_connect/db');
 
+var plotly = require('../private_modules/PlotlyGenerator');
+var plotlyGenerator = new plotly();
 
 /********************Uploads Datasets********************/
 var fs = require("fs");
@@ -79,6 +81,11 @@ app.get('/', function (req, res) {
       }
 });
 
+router.get("/downloadTutorial", function(req,res,next){
+    var data =fs.readFileSync('./RPS1.0UserGuide.pdf');
+    res.contentType("application/pdf");
+    res.send(data);
+})
 
 //Aca leo el archivo en R
 var myEventHandler = function (nameFile,params,res) {
@@ -113,6 +120,14 @@ var myEventHandler = function (nameFile,params,res) {
                 }
                 else{
                 dataParse.dataset_id = result.rows[0].dataset_id;
+
+                if(dataParse.dimention == 3){
+                    dataParse.data_plotly =  plotlyGenerator.generateGraphicsPlotly3D(dataParse);
+                    dataParse.layout = plotlyGenerator.getLayoutPlotly3D();
+                }
+                dataParse.data_plotly =  plotlyGenerator.generateGraphicsPlotly2D(dataParse);
+                dataParse.layout = plotlyGenerator.getLayoutPlotly2D("3");
+
                 res.status(200).json(JSON.stringify(dataParse));
                 }
 

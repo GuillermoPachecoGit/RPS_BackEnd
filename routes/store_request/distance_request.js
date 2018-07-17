@@ -43,7 +43,7 @@ router.post('/runDistance', function(req,res,next){
             .data({"num_specimen" : data['numbers_of_specimen'],"num_landmark": data['numbers_of_landmark'] ,"dim": data['dimention'] , "data": parser.generateArraySpecimens(data['specimens']['data']) })
             .callSync();
             prefix = 'rD_';
-            params.algorithm = 'Procrustes resistant distance'
+            params.algorithm = 'Resistant Distance'
           break;
   
           case 1:
@@ -51,7 +51,7 @@ router.post('/runDistance', function(req,res,next){
             .data({"num_specimen" : data['numbers_of_specimen'],"num_landmark": data['numbers_of_landmark'] ,"dim": data['dimention'] , "data": parser.generateArraySpecimens(data['specimens']['data']) })
             .callSync();
             prefix = 'lsD_';
-            params.algorithm = 'Procrustes  distance by Least Squares';
+            params.algorithm = 'Least-Squares Distance';
           break;
   
         } 
@@ -84,6 +84,7 @@ router.post('/runDistance', function(req,res,next){
                   params.data = dataR.data;
                   var pdf_aux = builder.generatePDF_Distance(params);
                   dataR.pdf = pdf_aux;
+                  dataR.node_tree = req.body.node_tree;
                  
                 bd.query('UPDATE distance SET distance_name = $1, pdf = $3 WHERE distance_id = $2',[prefix+data['dataset_name']+'_'+result.rows[0].distance_id, dataR.distance_id, JSON.stringify(pdf_aux)], function(err, result){      
                   bd.query('SELECT first_name,email_address FROM app_user WHERE user_id = $1',[user_id], function(err, result){
@@ -94,8 +95,8 @@ router.post('/runDistance', function(req,res,next){
                     }
 
                     console.log('voy a mandar el email');
-                    var email_text = 'The analisys: '+ dataR.distance_name +'  has finished. Please enter the page to view the results. \n';
-                    email_text += 'Best Regards.\nRPS Team';
+                    var email_text = 'The analysis: '+ dataR.distance_name +'  has finished ...please check. \n';
+                    email_text += 'Sincerely,\nRPS Team';
                     var email_to = result.rows[0].email_address;
                     senderEmail.sendEmail(senderEmail.generateMailOptions(email_to,senderEmail.subject().Distance,email_text));
                   });

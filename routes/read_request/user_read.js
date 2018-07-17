@@ -78,7 +78,7 @@ router.post('/pass_recovery', function(req,res,next){
 
           res.status(200).json( { "result": "ok" } );
         }else{
-          res.status(200).json( { "result": "User don't exist." } );
+          res.status(200).json( { "result": "User does not exist." } );
         }
          
       }

@@ -12,6 +12,9 @@ var senderEmail = new emailManager();
 var pdfBuilder = require('../../private_modules/PDFBuilder');
 var builder = new pdfBuilder();
 
+var plotly = require('../../private_modules/PlotlyGenerator');
+var plotlyGenerator = new plotly();
+
 router.post('/runOrdination', function(req,res,next){
     var project_id = req.body.project_id;
     var distance_id = req.body.distance_id;
@@ -40,7 +43,7 @@ router.post('/runOrdination', function(req,res,next){
             .data({ "data": JSON.stringify(data['data']), dim : dimention })
             .callSync();
             prefix = 'lsUMDS_';
-            params.algorithm = 'Universal multidimensional scaling by Least Squeares'
+            params.algorithm = 'Least-Squeares UMDS'
           break;
   
           case 2:
@@ -48,7 +51,7 @@ router.post('/runOrdination', function(req,res,next){
             .data({"data": JSON.stringify(data['data']), dim : dimention })
             .callSync();
             prefix = 'rUMDS_';
-            params.algorithm = 'Universal multidimensional resistant scaling'
+            params.algorithm = 'Resistant UMDS'
           break;
         }
   
@@ -82,6 +85,7 @@ router.post('/runOrdination', function(req,res,next){
 
                       //PDF
                       var pdf = builder.generatePDF_Ordination(params);
+                      dataR.node_tree = req.body.node_tree;
 
 
                       bd.query('UPDATE ordination SET ordination_name = $1, pdf = $3 WHERE ordination_id = $2',[prefix+data['distance_name']+'_'+result.rows[0].ordination_id,result.rows[0].ordination_id,JSON.stringify(pdf) ], function(err, result){
@@ -100,11 +104,14 @@ router.post('/runOrdination', function(req,res,next){
                           }
 
                           console.log('voy a mandar el email');
-                          var email_text = 'The analisys: '+ dataR.ordination_name +'has finished. Please enter the page to view the results. \n';
-                          email_text += 'Best Regards.\nRPS Team';
+                          var email_text = 'The analisys: '+ dataR.ordination_name +'has finished... please check.\n';
+                          email_text += 'Sincerely,\nRPS Team';
                           var email_to = result.rows[0].email_address;
                           senderEmail.sendEmail(senderEmail.generateMailOptions(email_to,senderEmail.subject().Ordination,email_text));          
                           //I sent to response at app
+                          dataR.data_plotly =  plotlyGenerator.generateOrdinationGraphic(dataR);
+                          dataR.layout = plotlyGenerator.getLayoutPlotlyOrdination2D(algorithm);
+
                         res.status(200).json(JSON.stringify(dataR));               
                       });
                     });

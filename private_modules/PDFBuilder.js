@@ -128,15 +128,15 @@ class PDFBuilder {
         var pdf = {
             content: [
                 
-                {text: 'Procrustes analysis report', style: 'header'},
+                {text: 'Procrustes Superimposition Report', style: 'header'},
 
 
-                {text: 'Algorithm used: '+params.algorithm},
-                {text: 'Dimension: '+params.dimention+'D'},
-                {text: 'Name: '+params.name},
-                {text: 'Source dataset: '+params.original_name},
-                {text: 'Numbers of specimens: '+params.numbers_of_specimen },  
-                {text: 'Numbers of landmarks: '+params.numbers_of_landmark }
+                {text: 'Type of Superimposition: '+params.algorithm},
+                {text: 'Data Dimension: '+params.dimention+'D'},
+                {text: 'Dataset Name: '+params.name},
+                {text: 'Source Dataset: '+params.original_name},
+                {text: 'Number of Objects: '+params.numbers_of_specimen },  
+                {text: 'Number of Landmarks: '+params.numbers_of_landmark }
             ],
             styles: {
                 header: {
@@ -166,27 +166,27 @@ class PDFBuilder {
 
         
         if(params.excluded_land.length > 0){
-            pdf.content.push({text: 'Excluded landmark: '});
+            pdf.content.push({text: 'Excluded Landmarks: '});
             for (let index = 0; index < params.excluded_land.length; index++) {
                 const element = params.excluded_land[index];
                 pdf.content.push({text: 'LM_'+(parseInt(element)+1)});
             }
         }else{
-            pdf.content.push({text: 'Excluded landmark: N/A'});
+            pdf.content.push({text: 'Excluded Landmarks: N/A'});
         }
         
         if(params.excluded_spec.length > 0){
-            pdf.content.push({text: 'Excluded Specimen: '});
+            pdf.content.push({text: 'Excluded Objects: '});
             for (let index = 0; index < params.excluded_spec.length; index++) {
                 const element = params.excluded_spec[index];
                 pdf.content.push({text: params.specimen_name[element]});
             }
         }else{
-            pdf.content.push({text: 'Excluded Specimen: N/A'});
+            pdf.content.push({text: 'Excluded Objects: N/A'});
         }
         
 
-        pdf.content.push({text: 'Specimens: ', style: 'header'});
+        pdf.content.push({text: 'Objects: ', style: 'header'});
 
 
         return this.generateTable(params,header,pdf);
@@ -204,13 +204,13 @@ class PDFBuilder {
         var pdf = {
             content: [
                 
-                {text: 'Procrustes multivariate distance report', style: 'header'},
+                {text: 'Distance Matrix Report', style: 'header'},
 
 
-                {text: 'Algorithm used: '+params.algorithm},
-                {text: 'Name: '+params.name},
-                {text: 'Source dataset: '+params.original_name},
-                {text: 'Numbers of specimens: '+params.numbers_of_specimen }
+                {text: 'Type of Distance: '+params.algorithm},
+                {text: 'Output Name: '+params.name},
+                {text: 'Source Dataset: '+params.original_name},
+                {text: 'Number of Objects: '+params.numbers_of_specimen }
             ],
             styles: {
                 header: {
@@ -247,13 +247,13 @@ class PDFBuilder {
         var pdf = {
             content: [
                 
-                {text: 'Universal multidimensional scaling report', style: 'header'},
+                {text: 'Ordination Report', style: 'header'},
 
 
-                {text: 'Algorithm used: '+params.algorithm},
-                {text: 'Name: '+params.name},
-                {text: 'Source distance: '+params.distance_name},
-                {text: 'Coordinates', style: 'subheader'}
+                {text: 'Type of Universal MDS: '+params.algorithm},
+                {text: 'Output Name: '+params.name},
+                {text: 'Source Distance Matrix: '+params.distance_name},
+                {text: 'Cartesian Coordinates: ', style: 'subheader'}
             ],
             styles: {
                 header: {

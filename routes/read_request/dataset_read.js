@@ -3,6 +3,10 @@ var router = express.Router();
 var bd=require('../db_connect/db');
 
 
+var plotly = require('../../private_modules/PlotlyGenerator');
+var plotlyGenerator = new plotly();
+
+
 router.get('/get_datasets', function(req,res,next){
   var project_id = req.query.id;
   console.log(project_id);
@@ -137,6 +141,23 @@ router.get('/get_datasetById', function(req,res,next){
             res.status(200).json({ "error": err});
           }
         });
+
+
+        var prefix =  result.rows[0]['dataset_name'].split("_")[0];
+        var type = 3;
+        if(prefix == "GrP")
+            type = 2;
+        if(prefix == "GlsP")
+            type = 1;
+        if(result.rows[0].dimention == 3){
+          result.rows[0].data_plotly =  plotlyGenerator.generateGraphicsPlotly3D(result.rows[0]);
+          result.rows[0].layout = plotlyGenerator.getLayoutPlotly3D(type);
+        }else{
+          result.rows[0].data_plotly =  plotlyGenerator.generateGraphicsPlotly2D(result.rows[0]);
+          result.rows[0].layout = plotlyGenerator.getLayoutPlotly2D(type);
+        }
+        
+        
         res.status(200).json(JSON.stringify(result.rows[0]));
       }
   });
@@ -243,6 +264,19 @@ router.get('/get_ordinationById', function(req,res,next){
             res.status(200).json({ "error": err});
           }
         });
+
+
+        var prefix =  result.rows[0]['ordination_name'].split("_")[0];
+        var type;
+        if(prefix == "rUMDS")
+            type = 2;
+        if(prefix == "lsUMDS")
+            type = 1;
+
+
+            result.rows[0].data_plotly =  plotlyGenerator.generateOrdinationGraphic(result.rows[0]);
+            result.rows[0].layout = plotlyGenerator.getLayoutPlotlyOrdination2D(type);
+
         res.status(200).json(JSON.stringify(result.rows[0]));
       }
   });
