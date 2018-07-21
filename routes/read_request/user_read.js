@@ -35,6 +35,8 @@ router.post('/update_user', function(req,res,next){
 });
 
 
+
+
 router.post('/pass_recovery', function(req,res,next){
   params = req.body;
   console.log("pass: "+params.email);

@@ -31,6 +31,8 @@ app.get('/', function (req, res) {
     res.sendFile( "index.html" );
  })
 
+ 
+
 
 
  router.post("/uploadFile", upload.array("uploads[]", 12), function(req, res) {
@@ -123,10 +125,12 @@ var myEventHandler = function (nameFile,params,res) {
 
                 if(dataParse.dimention == 3){
                     dataParse.data_plotly =  plotlyGenerator.generateGraphicsPlotly3D(dataParse);
-                    dataParse.layout = plotlyGenerator.getLayoutPlotly3D();
-                }
+                    dataParse.layout = plotlyGenerator.getLayoutPlotly3D("3", dataParse.dataset_name);
+                }else{
+                    
                 dataParse.data_plotly =  plotlyGenerator.generateGraphicsPlotly2D(dataParse);
-                dataParse.layout = plotlyGenerator.getLayoutPlotly2D("3");
+                dataParse.layout = plotlyGenerator.getLayoutPlotly2D("3", dataParse.dataset_name);
+                }
 
                 res.status(200).json(JSON.stringify(dataParse));
                 }

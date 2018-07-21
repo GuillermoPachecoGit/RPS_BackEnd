@@ -57,13 +57,11 @@ class PDFBuilder {
                 table.push(table_string[index]);
                 
             }
-            console.log(table);
             table_pdf.table.body.push(
                 table
             );
         }
-        pdf.content.push(table_pdf)
-        console.log(JSON.stringify(table_pdf));
+        pdf.content.push(table_pdf);
         return pdf;
      }
 

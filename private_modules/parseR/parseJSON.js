@@ -85,7 +85,6 @@ class ParseJSON {
         }
 
         delete data_R.data;
-        console.log('specimen_name: '+JSON.stringify(data_R.specimens));
         data_R.colors = this.generateArrayColors(n_specimen);
         return data_R;
     }
@@ -113,14 +112,12 @@ class ParseJSON {
 
     generateArraySpecimensAnalize(data,excluded_spec, excluded_land){
         var result = [];
-        console.log("DESDE LA BASE: "+ JSON.stringify(data));
         for (let index = 0; index < data['data'].length; index++) {
             if(!excluded_spec.includes(index.toString())){
                 const element = data['data'][index];
                 result.push(this.cleanLandmarks(element['specimen'+index],excluded_land));
             }           
         }
-        console.log('cantidad de specimen: '+result.length);
         return JSON.stringify(result);
     }
 
@@ -132,7 +129,6 @@ class ParseJSON {
             }  
 
         }
-        console.log('cantidad de land: '+result.length);
         return result;
     }
 }

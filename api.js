@@ -9,7 +9,6 @@ var bodyParser = require('body-parser');
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
 app.use(cors())
 // ROUTES FOR OUR API
 // =============================================================================
@@ -74,8 +73,9 @@ app.use('/db_request_remove_w', removeManagement);
 app.use(express.static('public/dist/'));
 
 
-
-
+app.get('/log_out',function (req,res){
+    res.end("");
+})
 app.get('/main/home',function (req,res){
     res.redirect('/');
 })

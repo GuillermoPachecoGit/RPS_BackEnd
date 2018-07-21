@@ -3,7 +3,7 @@ class PlotlyGenerator {
         
      }
 
-     generateGraphicsPlotly3D(params){
+     generateGraphicsPlotly3D(params,name){
         let data = [];
         let specimens = params['specimens'];
         let colors = params['colors'];
@@ -34,7 +34,7 @@ class PlotlyGenerator {
         return data;
       }
 
-      getLayoutPlotly3D(algorithm){
+      getLayoutPlotly3D(algorithm,name){
         var aux = "";
         if(algorithm == 1)
             aux = "Generalizaded Least-Squares Procrustes Superimposition" 
@@ -42,13 +42,10 @@ class PlotlyGenerator {
             aux = "Generalizaded Resistant Procrustes Superimposition"
         if(algorithm == 3)
             aux = "Dataset"        
+
+        aux += ": "+name;
         var layout = {
-            margin: {
-              l: 2,
-              r: 2,
-              b: 2,
-              t: 2
-            },
+            margin: 10,
             xaxis: { nticks: 10, showline: false} ,
             yaxis: { scaleanchor: "x", showline: false},
             zaxis: { scaleanchor: "x", showline: false},
@@ -57,7 +54,7 @@ class PlotlyGenerator {
           return layout;
       }
 
-     getLayoutPlotly2D(algorithm){
+     getLayoutPlotly2D(algorithm,name){
       var aux = "";
         if(algorithm == 1)
             aux = "Generalizaded Least-Squares Procrustes Superimposition" 
@@ -66,6 +63,7 @@ class PlotlyGenerator {
         if(algorithm == 3)
             aux = "Dataset"  
       
+      aux = aux+ ": "+name;
       var layout = {
         margin: 2,
         xaxis: { nticks: 10 , showline: false} ,
@@ -76,11 +74,9 @@ class PlotlyGenerator {
     }
 
   generateArrayPlot(specimen, dim) {
-        console.log("genero array de datos");
         let result = [[], [], []];
         for (let index = 0; index < specimen.length; index++) {
           const element = specimen[index];
-
               result[0].push(element[0]);
               result[1].push(element[1]);
               if (dim === 3) {
@@ -91,7 +87,6 @@ class PlotlyGenerator {
                 result[2].push(0);
               }
         }
-        console.log("retorno array de datos");
         return result;
   }
     
@@ -119,7 +114,6 @@ class PlotlyGenerator {
       };
       data.push(trace);
     }
-    console.log("retorno la data");
     return data;
   }
 
@@ -160,12 +154,14 @@ class PlotlyGenerator {
     return dataResult;
   }
 
-  getLayoutPlotlyOrdination2D(algorithm){
+  getLayoutPlotlyOrdination2D(algorithm,name){
     var aux = "";
     if(algorithm == 1)
         aux = "Least-Squares Universal MDS";
     if(algorithm == 2)
         aux = "Resistant Universal MDS";
+
+    aux += ": "+name;
     var layout = {
       margin: 5,
       gridwidth: 0,
