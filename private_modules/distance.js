@@ -66,7 +66,7 @@ process.on('message', (msg) => {
                     var pdf_aux = builder.generatePDF_Distance(params);
                     dataR.pdf = pdf_aux;
                     dataR.node_tree = req.node_tree;
-                    bd.query('UPDATE distance SET distance_name = $1, pdf = $3 WHERE distance_id = $2',[prefix+data['dataset_name']+'_'+result.rows[0].distance_id, dataR.distance_id, JSON.stringify(pdf_aux)], function(){ 
+                    bd.query('UPDATE distance SET distance_name = $1, pdf = $3 WHERE distance_id = $2',[prefix+data['dataset_name']+'_'+result.rows[0].distance_id, dataR.distance_id, JSON.stringify(pdf_aux)], function(error,result){ 
                         if(error){
                             process.send({ "error": "Error in the connection with database." });
                         }
