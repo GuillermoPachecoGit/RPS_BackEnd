@@ -65,7 +65,7 @@ process.on('message', (msg) => {
                       process.send( { "error": "Error in the connection with database." });
                     }
                     else{
-                      dataR.ordination_name = prefix+result.rows[0].ordination_name+'_'+result.rows[0].ordination_id;
+                      dataR.ordination_name = req.ordination_name+'_'+result.rows[0].ordination_id;
                       dataR.name = req.ordination_name;
                       dataR.ordination_id = result.rows[0].ordination_id;
                       params.name = dataR.ordination_name;

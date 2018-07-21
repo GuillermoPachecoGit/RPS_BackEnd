@@ -49,7 +49,7 @@ process.on('message', (msg) => {
                     process.send( { "error": "Error in the connection with database." });
                 }
                 else{
-                    dataR.distance_name = prefix+data['dataset_name']+'_'+result.rows[0]['distance_id'];
+                    dataR.distance_name = req.distance_name+'_'+result.rows[0]['distance_id'];
                     dataR.distance_id = result.rows[0].distance_id;
                     dataR.project_id_ref = data['project_id'];
                     dataR.dataset_id_ref = data['dataset_id'];
