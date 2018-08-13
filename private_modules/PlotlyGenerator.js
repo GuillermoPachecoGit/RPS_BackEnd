@@ -108,7 +108,7 @@ class PlotlyGenerator {
           line: {
           color: colors[index]}
         },
-        type: 'scatter',
+        type: 'scattergl',
         name: names[index],
         text: this.namesLandmaks(params)
       };

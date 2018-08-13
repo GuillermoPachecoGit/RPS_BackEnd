@@ -37,7 +37,6 @@ app.get('/', function (req, res) {
 
  router.post("/uploadFile", upload.array("uploads[]", 12), function(req, res) {
     var ext = path.extname(req.files[0].originalname);
-       console.log('extension: '+ext);
        if(ext !== '.tps' && ext !== '.nts' && ext !== '.txt') {
             console.log("archivo invalido");
             res.status(200).json( { "error": "Extension file invalid." });
@@ -47,7 +46,6 @@ app.get('/', function (req, res) {
                 switch (req.body.type_file) {
                     case '1':
                         if(ext != '.tps'){
-                            console.log("archivo invalido");
                             res.status(200).json( { "error": "Extension file not is correct." });
                             res.end();
                             return;
@@ -55,7 +53,6 @@ app.get('/', function (req, res) {
                         break;
                     case '2':
                         if(ext != '.nts'){
-                            console.log("archivo invalido");
                             res.status(200).json( { "error": "Extension file not is correct." });
                             res.end();
                             return;
@@ -64,7 +61,6 @@ app.get('/', function (req, res) {
                     case '4':
                     case '3':
                         if(ext != '.txt'){
-                            console.log("archivo invalido");
                             res.status(200).json( { "error": "Extension file not is correct." });
                             res.end();
                             return;
@@ -91,8 +87,7 @@ router.get("/downloadTutorial", function(req,res,next){
 
 //Aca leo el archivo en R
 var myEventHandler = function (nameFile,params,res) {
-    console.log(params);
-
+    console.log("Run -> Dataset loader");
     bd.query('SELECT 1 FROM dataset_json WHERE  project_id = $1 AND dataset_name = $2 ;',[params.project_id,params.dataset_name], function(err, result){
         if(err){
           res.status(200).json( { "error": "Error in the connection with database." });
@@ -103,9 +98,9 @@ var myEventHandler = function (nameFile,params,res) {
     var out = R("r_scripts/loadDataset.R")
     .data({file : path, "type_file": params.type_file})
     .callSync();
-    
+   console.log("R Processing Finished.");
    dataParse = parser.OnlyParseDataR(out);
-
+   console.log("Node js Processing Finished.");
    dataParse.project_id = params.project_id;
    dataParse.dataset_name = params.dataset_name;
    dataParse.specimens.numbers_of_landmarks = dataParse.numbers_of_landmark;
@@ -115,7 +110,6 @@ var myEventHandler = function (nameFile,params,res) {
    dataParse.specimens.root_number_specimens = dataParse.numbers_of_specimen;
    
             bd.query('INSERT INTO dataset_json values(DEFAULT,$1,$2,$3,$4,$5,$6,$7,$8,$9,NULL,NULL,0,0) RETURNING dataset_id',[params.project_id,params.dataset_name,nameFile,dataParse.numbers_of_specimen,dataParse.numbers_of_landmark,dataParse.dimention,JSON.stringify(dataParse.specimens),JSON.stringify(dataParse.colors),JSON.stringify(dataParse.specimen_name)], function(err, result){
-                console.log(result);
                 if(err){
                 console.log(err);
                 res.status(200).json( { "error": "Error in the connection with database." });
@@ -132,6 +126,7 @@ var myEventHandler = function (nameFile,params,res) {
                 dataParse.layout = plotlyGenerator.getLayoutPlotly2D("3", dataParse.dataset_name);
                 }
 
+                console.log("Sending responce dataset loader.");
                 res.status(200).json(JSON.stringify(dataParse));
                 }
 
