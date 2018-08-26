@@ -88,7 +88,7 @@ router.get("/downloadTutorial", function(req,res,next){
 //Aca leo el archivo en R
 var myEventHandler = function (nameFile,params,res) {
     console.log("Run -> Dataset loader");
-    bd.query('SELECT 1 FROM dataset_json WHERE  project_id = $1 AND dataset_name = $2 ;',[params.project_id,params.dataset_name], function(err, result){
+    bd.query('SELECT 1 FROM dataset WHERE  project_id_ref = $1 AND dataset_name = $2 ;',[params.project_id,params.dataset_name], function(err, result){
         if(err){
           res.status(200).json( { "error": "Error in the connection with database." });
         }
@@ -103,13 +103,14 @@ var myEventHandler = function (nameFile,params,res) {
    console.log("Node js Processing Finished.");
    dataParse.project_id = params.project_id;
    dataParse.dataset_name = params.dataset_name;
-   dataParse.specimens.numbers_of_landmarks = dataParse.numbers_of_landmark;
-   dataParse.specimens.numbers_of_specimens = dataParse.numbers_of_specimen;
+   console.log(dataParse);
+   dataParse.data.numbers_of_landmarks = dataParse.number_of_landmarks;
+   dataParse.data.numbers_of_specimens = dataParse.number_of_objects;
 
-   dataParse.specimens.root_number_landmarks = dataParse.numbers_of_landmark;
-   dataParse.specimens.root_number_specimens = dataParse.numbers_of_specimen;
+   dataParse.data.root_number_landmarks = dataParse.numbers_of_landmarks;
+   dataParse.data.root_number_specimens = dataParse.numbers_of_specimens;
    
-            bd.query('INSERT INTO dataset_json values(DEFAULT,$1,$2,$3,$4,$5,$6,$7,$8,$9,NULL,NULL,0,0) RETURNING dataset_id',[params.project_id,params.dataset_name,nameFile,dataParse.numbers_of_specimen,dataParse.numbers_of_landmark,dataParse.dimention,JSON.stringify(dataParse.specimens),JSON.stringify(dataParse.colors),JSON.stringify(dataParse.specimen_name)], function(err, result){
+            bd.query('INSERT INTO dataset values(DEFAULT,$1,$2,$3,$4,$5,$6,$7,$8,$9,null,0,0,null) RETURNING dataset_id',[params.project_id,params.dataset_name,nameFile,dataParse.numbers_of_specimens,dataParse.numbers_of_landmarks,dataParse.dimention,JSON.stringify(dataParse.data),JSON.stringify(dataParse.colors),JSON.stringify(dataParse.objects_name)], function(err, result){
                 if(err){
                 console.log(err);
                 res.status(200).json( { "error": "Error in the connection with database." });

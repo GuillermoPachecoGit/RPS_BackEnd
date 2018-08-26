@@ -27,6 +27,8 @@ CREATE TABLE APP_USER(
     email_address    email    NOT NULL,
     institution      varchar(80),
     country_id       int8            NOT NULL,
+    last_name       varchar(80),
+    nick            varchar(80)      NOT NULL,
     CONSTRAINT PK_APP_USER PRIMARY KEY (user_id),
     CONSTRAINT AK_APP_USER  UNIQUE (email_address)
 )
@@ -66,37 +68,37 @@ ALTER TABLE PROJECT ADD CONSTRAINT FK_PROJECT_APP_USER
 ;
 
 --
---  TABLE: DATASET_JSON
+--  TABLE: dataset
 --
-CREATE  TABLE dataset_json (
+CREATE  TABLE dataset (
  dataset_id serial NOT NULL,
- project_id  int8  NOT NULL, --> MAS EFICIENCIA DE ACCESO.
+ project_id_ref int8  NOT NULL, 
  dataset_name   varchar(80)  NOT NULL,
  file_name   varchar(256)  NOT NULL,
- numbers_of_specimen    int4  NOT NULL,
- numbers_of_landmark    int4  NOT NULL,
+ number_of_objects    int4  NOT NULL,
+ number_of_landmarks    int4  NOT NULL,
  dimention              int4  NOT NULL,
- specimens json NOT NULL,
+ data json NOT NULL,
  colors json NOT NULL, --para editar colores
- specimen_name json NOT NULL,
+ objects_name json NOT NULL,
  dataset_id_ref int8 NULL,
- project_id_ref  int8  NULL,
  show_consensus int8 NOT NULL,
  send int8 NOT NULL,
+ pdf json,
  CONSTRAINT pk_dataset_json PRIMARY KEY (dataset_id)
 );
 
-ALTER TABLE dataset_json ADD CONSTRAINT FK_dataset_json_project
-FOREIGN KEY (project_id)
+ALTER TABLE dataset ADD CONSTRAINT FK_dataset_json_project
+FOREIGN KEY (project_id_ref)
 REFERENCES project(project_id)
 ON DELETE CASCADE;
 
-ALTER TABLE dataset_json ADD CONSTRAINT FK_dataset_json_dataset
+ALTER TABLE dataset ADD CONSTRAINT FK_dataset_json_dataset
 FOREIGN KEY (dataset_id_ref)
-REFERENCES dataset_json(dataset_id)
+REFERENCES dataset(dataset_id)
 ON DELETE CASCADE;  
 -- 
--- DROP TABLE dataset_json
+-- DROP TABLE dataset
 
  
 -- 
@@ -106,39 +108,39 @@ ON DELETE CASCADE;
 CREATE TABLE DISTANCE(
     distance_id serial NOT NULL,
     dataset_id_ref int8 NOT NULL,
-    project_id_ref int8 NOT NULL,
     distance_name varchar(80) NOT NULL,
     data json NOT NULL,
-    specimen_name json NOT NULL,
+    objects_name json NOT NULL,
     dimention int8 NOT NULL,
     send int NOT NULL,
+    pdf json,
     CONSTRAINT PK_DISTANCE PRIMARY KEY (distance_id)
 )
 ;
 
 ALTER TABLE DISTANCE ADD CONSTRAINT FK_DISTANCE_DATASET
     FOREIGN KEY (dataset_id_ref)
-    REFERENCES dataset_json(dataset_id)
+    REFERENCES dataset(dataset_id)
     ON DELETE CASCADE
 ;
 
 CREATE TABLE ORDINATION(
     ordination_id serial NOT NULL,
     dataset_id_ref int8 NOT NULL,
-    project_id_ref int8 NOT NULL,
     distance_id_ref int8 NOT NULL,
     ordination_name varchar(80) NOT NULL,
     data json NOT NULL,
-    specimen_name json NOT NULL,
+    objects_name json NOT NULL,
     colors json NOT NULL,
     send int8 NOT NULL,
+    pdf json,
     CONSTRAINT PK_ordination PRIMARY KEY (ordination_id)
 )
 ;
 
 ALTER TABLE ORDINATION ADD CONSTRAINT FK_ORDINATION_DATASET
     FOREIGN KEY (dataset_id_ref)
-    REFERENCES dataset_json(dataset_id)
+    REFERENCES dataset(dataset_id)
     ON DELETE CASCADE
 ;
 
@@ -147,20 +149,3 @@ ALTER TABLE ORDINATION ADD CONSTRAINT FK_ORDINATION_DISTANCE
     REFERENCES distance(distance_id)
     ON DELETE CASCADE
 ;
-
-
---new
-ALTER TABLE DATASET_JSON 
-ADD COLUMN pdf json;
-
-ALTER TABLE DISTANCE 
-ADD COLUMN pdf json;
-
-ALTER TABLE ORDINATION 
-ADD COLUMN pdf json;
-
---new
-ALTER TABLE public.app_user ADD COLUMN last_name character varying(80);
-ALTER TABLE public.app_user ADD COLUMN nick character varying(80);
-ALTER TABLE public.app_user ALTER COLUMN nick SET NOT NULL;
-ALTER TABLE public.app_user ALTER COLUMN nick SET DEFAULT '-'::character varying;

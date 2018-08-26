@@ -21,7 +21,7 @@ router.post('/deleteProject', function(req,res,next){
 router.post('/deleteDataset', function(req,res,next){
     var dataset_id = req.body.dataset_id;
 
-    bd.query('DELETE FROM dataset_json WHERE dataset_id = $1',[dataset_id], function(err, result){
+    bd.query('DELETE FROM dataset WHERE dataset_id = $1',[dataset_id], function(err, result){
         if(err){
             res.status(200).json({ "result" : "error"});
         }

@@ -5,9 +5,9 @@ class PlotlyGenerator {
 
      generateGraphicsPlotly3D(params,name){
         let data = [];
-        let specimens = params['specimens'];
+        let specimens = params['data'];
         let colors = params['colors'];
-        let names = params['specimen_name'];
+        let names = params['objects_name'];
 
         for (let index = 0; index < specimens.data.length; index++) {
           const element = specimens.data[index]['specimen' + index];
@@ -92,9 +92,9 @@ class PlotlyGenerator {
     
   generateGraphicsPlotly2D(params){
     let data = [];
-    let specimens = params['specimens'];
+    let specimens = params['data'];
     let colors = params['colors'];
-    let names = params['specimen_name'];
+    let names = params['objects_name'];
     for (let index = 0; index < specimens.data.length; index++) {
       const element = specimens.data[index]['specimen' + index];
 
@@ -119,8 +119,8 @@ class PlotlyGenerator {
 
   namesLandmaks(params){
     var result = [];
-    for (let index = 0; index < params.specimens.root_number_landmarks; index++) {
-      if(!params.specimens.excluded_land.includes(index.toString())){
+    for (let index = 0; index < params.data.root_number_landmarks; index++) {
+      if(!params.data.excluded_land.includes(index.toString())){
           result.push('LM_'+(index+1).toString());
       }
     }
@@ -129,7 +129,7 @@ class PlotlyGenerator {
 
   generateOrdinationGraphic(params){
     let colors = params['colors'];
-    var names = params['specimen_name'];
+    var names = params['objects_name'];
     var data = params['data'];
     var dataResult = [];
     for (let index = 0; index < data.length; index++) {

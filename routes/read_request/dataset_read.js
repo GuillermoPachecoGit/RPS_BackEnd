@@ -9,7 +9,7 @@ var plotlyGenerator = new plotly();
 
 router.get('/get_datasets', function(req,res,next){
   var project_id = req.query.id;
-  bd.query('SELECT dataset_id, dataset_name FROM dataset_json WHERE project_id = $1 AND show_consensus <> 1',[project_id],function(err, result){
+  bd.query('SELECT dataset_id, dataset_name FROM dataset WHERE project_id_ref = $1 AND show_consensus <> 1',[project_id],function(err, result){
     if(err){
         res.status(200).json({ "error": err});
       }
@@ -23,7 +23,7 @@ router.get('/get_datasets', function(req,res,next){
 
 router.get('/get_only_datasets', function(req,res,next){
   var project_id = req.query.id;
-  bd.query('SELECT dataset_id, dataset_name FROM dataset_json WHERE project_id = $1 AND show_consensus <> 1 AND dataset_id_ref is NULL',[project_id],function(err, result){
+  bd.query('SELECT dataset_id, dataset_name FROM dataset WHERE project_id_ref = $1 AND show_consensus <> 1 AND dataset_id_ref is NULL',[project_id],function(err, result){
     if(err){
         res.status(200).json({ "error": err});
       }
@@ -36,13 +36,14 @@ router.get('/get_only_datasets', function(req,res,next){
 
 
 router.get('/get_analisys', function(req,res,next){
-  var project_id = req.query.project_id;
-  var dataset_id = req.query.dataset_id;
-  bd.query('SELECT * FROM dataset_json WHERE project_id_ref = $1  AND dataset_id_ref = $2',[project_id,dataset_id],function(err, result){
+  console.log(req.query);
+  var dataset_id = req.query.id;
+  bd.query('SELECT * FROM dataset WHERE  dataset_id_ref = $1',[dataset_id],function(err, result){
     if(err){
         res.status(200).json({ "error": err});
       }
       else{
+        console.log(result.rows);
         res.status(200).json(result.rows);
       }
   });
@@ -50,13 +51,13 @@ router.get('/get_analisys', function(req,res,next){
 );
 
 router.get('/get_distances', function(req,res,next){
-  var project_id = req.query.project_id;
-  var dataset_id = req.query.dataset_id;
-  bd.query('SELECT * FROM distance WHERE project_id_ref = $1 AND dataset_id_ref = $2',[project_id, dataset_id],function(err, result){
+  var dataset_id = req.query.id;
+  bd.query('SELECT * FROM distance WHERE  dataset_id_ref = $1',[dataset_id],function(err, result){
     if(err){
         res.status(200).json({ "error": err});
       }
       else{
+        console.log(result.rows);
         res.status(200).json(result.rows);
       }
   });
@@ -80,7 +81,7 @@ router.get('/get_distances_by_project', function(req,res,next){
 
 router.get('/get_analisys_PDF', function(req,res,next){
   var dataset_id = req.query.id;
-  bd.query('SELECT dataset_name,pdf FROM dataset_json WHERE dataset_id = $1',[dataset_id],function(err, result){
+  bd.query('SELECT dataset_name,pdf FROM dataset WHERE dataset_id = $1',[dataset_id],function(err, result){
     if(err){
         res.status(200).json({ "error": err});
       }
@@ -116,13 +117,13 @@ router.get('/get_ordination_PDF', function(req,res,next){
 
 router.get('/get_datasetById', function(req,res,next){
   var dataset_id = req.query.id;
-  bd.query('SELECT * FROM dataset_json WHERE dataset_id = $1',[dataset_id],function(err, result){
+  bd.query('SELECT * FROM dataset WHERE dataset_id = $1',[dataset_id],function(err, result){
     if(err){
         res.status(200).json({ "error": err});
       }
       else{
 
-        bd.query('UPDATE dataset_json SET send=0 WHERE dataset_id = $1',[dataset_id],function(err, res){
+        bd.query('UPDATE dataset SET send=0 WHERE dataset_id = $1',[dataset_id],function(err, res){
           if(err){
             res.status(200).json({ "error": err});
           }
@@ -141,10 +142,7 @@ router.get('/get_datasetById', function(req,res,next){
         }else{
           result.rows[0].data_plotly =  plotlyGenerator.generateGraphicsPlotly2D(result.rows[0]);
           result.rows[0].layout = plotlyGenerator.getLayoutPlotly2D(type,result.rows[0]['dataset_name']);
-        }
-        
-        console.log("RETORNO: "+result);
-        
+        }   
         res.status(200).json(JSON.stringify(result.rows[0]));
       }
   });
@@ -152,7 +150,7 @@ router.get('/get_datasetById', function(req,res,next){
 
 router.get('/get_dataset_pending', function(req,res,next){
   var project_id = req.query.id;
-  bd.query('SELECT * FROM dataset_json WHERE project_id = $1 AND send = 1',[project_id],function(err, result){
+  bd.query('SELECT * FROM dataset WHERE project_id_ref = $1 AND send = 1',[project_id],function(err, result){
     if(err){
         res.status(200).json({ "error": err});
       }
@@ -164,26 +162,62 @@ router.get('/get_dataset_pending', function(req,res,next){
 
 router.get('/get_distance_pending', function(req,res,next){
   var project_id = req.query.id;
-  bd.query('SELECT * FROM distance WHERE project_id_ref = $1 AND send = 1',[project_id],function(err, result){
+  bd.query('SELECT * FROM dataset WHERE project_id_ref = $1',[project_id],function(err, result){
     if(err){
         res.status(200).json({ "error": err});
       }
       else{
-        res.status(200).json(JSON.stringify(result.rows));
+
+        distances = [];
+        result.rows.forEach(element => {
+          bd.query('SELECT * FROM distance WHERE dataset_id_ref = $1 AND send = 1',[element.dataset_id],function(err, result_dis){
+            if(err){
+                res.status(200).json({ "error": err});
+              }
+              else{
+                distances = distances.concat(result_dis.rows);
+              }
+          });
+        });
+        res.status(200).json(JSON.stringify(distances));
       }
   });
+
+ 
 });
 
 router.get('/get_ordination_pending', function(req,res,next){
   var project_id = req.query.id;
-  bd.query('SELECT * FROM ordination WHERE project_id_ref = $1 AND send = 1',[project_id],function(err, result){
+  bd.query('SELECT * FROM dataset WHERE project_id_ref = $1',[project_id],function(err, result){
     if(err){
         res.status(200).json({ "error": err});
       }
       else{
-        res.status(200).json(JSON.stringify(result.rows));
+
+        ordinations = [];
+        result.rows.forEach(element => {
+          bd.query('SELECT * FROM distance WHERE dataset_id_ref = $1',[element.dataset_id],function(err, result_dis){
+            if(err){
+                res.status(200).json({ "error": err});
+              }
+              else{
+                result_dis.rows.forEach(element_dis => {
+                  bd.query('SELECT * FROM ordination WHERE distance_id_ref = $1 AND send = 1',[element_dis.distance],function(err, result_ord){
+                    if(err){
+                        res.status(200).json({ "error": err});
+                      }
+                      else{
+                         ordinations = ordinations.concat(result_ord.rows);
+                      }
+                  });
+                });
+              }
+          });
+        });
+        res.status(200).json(JSON.stringify(ordinations));
       }
   });
+
 });
   
 router.get('/get_distanceById', function(req,res,next){
@@ -213,7 +247,7 @@ router.get('/get_ordinations', function(req,res,next){
   var dataset_id = req.query.dataset_id;
   var project_id = req.query.project_id;
 
-  bd.query('SELECT * FROM ordination WHERE distance_id_ref = $1 AND dataset_id_ref = $2 AND project_id_ref = $3',[distance_id,dataset_id,project_id],function(err, result){
+  bd.query('SELECT * FROM ordination WHERE distance_id_ref = $1 AND dataset_id_ref = $2 ',[distance_id,dataset_id],function(err, result){
     if(err){
         res.status(200).json({ "error": err});
       }

@@ -10,8 +10,8 @@ class ParseJSON {
         var dim = dataset[0].length;
         var n_specimen = dataset[0][0].length;
         
-        data_R.specimens = { data:[], excluded_land: [], excluded_spec: [], numbers_of_landmarks:0, numbers_of_specimens: 0, root_number_landmarks: 0, root_number_specimens: 0 };
-        data_R.specimen_name = [];
+        data_R.data = { data:[], excluded_land: [], excluded_spec: [], numbers_of_landmarks:0, numbers_of_specimens: 0, root_number_landmarks: 0, root_number_specimens: 0 };
+        data_R.objects_name = [];
 
         var specimen;
         for (let i_spec = 0; i_spec < n_specimen; i_spec++) {
@@ -28,19 +28,19 @@ class ParseJSON {
                 } 
             }
             var name = "specimen".concat(i_spec);
-            data_R.specimens.data.push({ [name] : specimen});
+            data_R.data.data.push({ [name] : specimen});
             
             
             if(algorithm != 1 &&  (i_spec == (n_specimen-1)) && show_consensus){
-                data_R.specimen_name.push("Consensus");
+                data_R.objects_name.push("Consensus");
             }else{
-                data_R.specimen_name.push("Object_".concat(i_spec));
+                data_R.objects_name.push("Object_".concat(i_spec));
             }
             
             
         }
 
-        delete data_R.data;
+        //delete data_R.data;
         data_R.colors = this.generateArrayColors(n_specimen);
         return data_R;
     }
@@ -54,13 +54,13 @@ class ParseJSON {
         var dim = dataset[0].length;
         var n_specimen = dataset[0][0].length;
         
-        data_R.specimens = { data:[], excluded_land: [], excluded_spec: [], numbers_of_landmarks:0, numbers_of_specimens: 0 , root_number_landmarks: 0 , root_number_specimens: 0 };
+        data_R.data = { data:[], excluded_land: [], excluded_spec: [], numbers_of_landmarks:0, numbers_of_specimens: 0 , root_number_landmarks: 0 , root_number_specimens: 0 };
    
         var addName = false;
         
-        if(JSON.stringify(data_R.specimen_name) === JSON.stringify({})){
+        if(JSON.stringify(data_R.objects_name) === JSON.stringify({})){
             addName = true;
-            data_R.specimen_name = [];
+            data_R.objects_name = [];
         }
 
         var specimen;
@@ -78,13 +78,12 @@ class ParseJSON {
                 } 
             }
             var name = "specimen".concat(i_spec);
-            data_R.specimens.data.push({ [name] : specimen});      
+            data_R.data.data.push({ [name] : specimen});      
             if(addName){
-                data_R.specimen_name.push("Object_".concat(i_spec));
+                data_R.objects_name.push("Object_".concat(i_spec));
             }
         }
 
-        delete data_R.data;
         data_R.colors = this.generateArrayColors(n_specimen);
         return data_R;
     }

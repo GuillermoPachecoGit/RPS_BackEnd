@@ -39,12 +39,7 @@ class PDFBuilder {
                 },
                 vLineColor: function (i, node) {
                     return (i === 0 || i === node.table.widths.length) ? 'black' : 'gray';
-                },
-                // paddingLeft: function(i, node) { return 4; },
-                // paddingRight: function(i, node) { return 4; },
-                // paddingTop: function(i, node) { return 2; },
-                // paddingBottom: function(i, node) { return 2; },
-                // fillColor: function (i, node) { return null; }
+                }
             }
         }
         table_pdf.table.body.push(header);
@@ -78,7 +73,7 @@ class PDFBuilder {
         for (let index = 0; index < params.data.length; index++) {
             const element = params.data[index];
             var table = this.arrayToString(element['specimen'+index],header);
-            dd.content.push({text: params.specimen_name[index]});
+            dd.content.push({text: params.objects_name[index]});
             dd.content.push(
                 {
                     style: 'tableExample',
@@ -100,12 +95,7 @@ class PDFBuilder {
                         },
                         vLineColor: function (i, node) {
                             return (i === 0 || i === node.table.widths.length) ? 'black' : 'gray';
-                        },
-                        // paddingLeft: function(i, node) { return 4; },
-                        // paddingRight: function(i, node) { return 4; },
-                        // paddingTop: function(i, node) { return 2; },
-                        // paddingBottom: function(i, node) { return 2; },
-                        // fillColor: function (i, node) { return null; }
+                        }
                     }
                 }
             );
@@ -124,17 +114,14 @@ class PDFBuilder {
         
        
         var pdf = {
-            content: [
-                
+            content: [ 
                 {text: 'Procrustes Superimposition Report', style: 'header'},
-
-
                 {text: 'Type of Superimposition: '+params.algorithm},
                 {text: 'Data Dimension: '+params.dimention+'D'},
                 {text: 'Dataset Name: '+params.name},
                 {text: 'Source Dataset: '+params.original_name},
-                {text: 'Number of Objects: '+params.numbers_of_specimen },  
-                {text: 'Number of Landmarks: '+params.numbers_of_landmark }
+                {text: 'Number of Objects: '+params.number_of_objects },  
+                {text: 'Number of Landmarks: '+params.number_of_landmarks }
             ],
             styles: {
                 header: {
@@ -177,7 +164,7 @@ class PDFBuilder {
             pdf.content.push({text: 'Excluded Objects: '});
             for (let index = 0; index < params.excluded_spec.length; index++) {
                 const element = params.excluded_spec[index];
-                pdf.content.push({text: params.specimen_name[element]});
+                pdf.content.push({text: params.objects_name[element]});
             }
         }else{
             pdf.content.push({text: 'Excluded Objects: N/A'});
@@ -203,8 +190,6 @@ class PDFBuilder {
             content: [
                 
                 {text: 'Distance Matrix Report', style: 'header'},
-
-
                 {text: 'Type of Distance: '+params.algorithm},
                 {text: 'Output Name: '+params.name},
                 {text: 'Source Dataset: '+params.original_name},
@@ -231,7 +216,6 @@ class PDFBuilder {
                 }
             },
             defaultStyle: {
-                // alignment: 'justify'
                 fontSize: 11
             },
             pageSize: 'A4'
@@ -243,11 +227,8 @@ class PDFBuilder {
      generatePDF_Ordination(params){
 
         var pdf = {
-            content: [
-                
+            content: [       
                 {text: 'Ordination Report', style: 'header'},
-
-
                 {text: 'Type of Universal MDS: '+params.algorithm},
                 {text: 'Output Name: '+params.name},
                 {text: 'Source Distance Matrix: '+params.distance_name},
