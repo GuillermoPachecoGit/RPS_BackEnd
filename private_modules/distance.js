@@ -18,7 +18,7 @@ process.on('message', (msg) => {
             
             console.log(algorithm);
             if(err){
-            process.send( { "error": "Error in the connection with database." });
+                process.send( { "error": "Error in the connection with database." });
             }
             else{
             data = result.rows[0];
@@ -45,6 +45,7 @@ process.on('message', (msg) => {
             break;
             } 
             var dataR  = JSON.parse(out);
+            console.log("termine de correr R");
             dataR.specimen_name = data['objects_name'];
             dataR.name = req.distance_name;
             

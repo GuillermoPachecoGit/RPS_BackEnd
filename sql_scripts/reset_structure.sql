@@ -1,4 +1,4 @@
-DELETE FROM public.dataset_json;
+DELETE FROM public.dataset;
 DELETE FROM public.distance;
 DELETE FROM public.ordination;
 DELETE FROM public.project;
@@ -14,6 +14,6 @@ SELECT * FROM public.project
 
 DROP TABLE public.ordination;
 DROP TABLE public.distance;
-DROP TABLE public.dataset_json;
+DROP TABLE public.dataset;
 DROP TABLE public.project;
 DROP TABLE public.app_user;
